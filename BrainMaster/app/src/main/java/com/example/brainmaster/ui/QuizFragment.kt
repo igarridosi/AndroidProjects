@@ -35,10 +35,16 @@ class QuizFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Empezamos a observar los LiveData del ViewModel.
-        observeViewModel()
+        // 1. Leemos el ID de la categoría que nos ha enviado el MainMenuFragment
+        // Usamos 9 (Conocimiento General) como valor por defecto si algo falla.
+        val categoryId = arguments?.getInt("CATEGORY_ID") ?: 9
+        val difficulty = arguments?.getString("DIFFICULTY") ?: "easy"
 
-        // Configuramos los clics de los botones.
+        // 2. Le pasamos el ID al ViewModel para que empiece el juego con la categoría correcta
+        viewModel.startGame(categoryId, difficulty)
+
+        // El resto de la función (observadores y clics) no cambia
+        observeViewModel()
         setupButtonClicks()
     }
 

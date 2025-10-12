@@ -25,14 +25,18 @@ class QuizViewModel : ViewModel() {
     private var allQuestions: List<Question> = emptyList()
     private var currentQuestionIndex: Int = 0
 
+    /*
     // 3. 'init' es un bloque que se ejecuta en cuanto se crea el ViewModel.
     //    Es el lugar perfecto para empezar a cargar las preguntas.
     init {
         startGame()
     }
 
+     */
+
+
     // 4. Función para empezar o reiniciar el juego.
-    fun startGame() {
+    fun startGame(categoryId: Int, difficulty: String) {
         currentQuestionIndex = 0
         score.value = 0 // Ponemos el contenido de la caja "score" a 0
         isGameFinished.value = false // El juego no ha terminado
@@ -41,7 +45,7 @@ class QuizViewModel : ViewModel() {
         // sin bloquear la app. Es la forma moderna y segura de hacerlo.
         viewModelScope.launch {
             isLoading.value = true // Avisamos a la pantalla que estamos cargando
-            allQuestions = repository.getTriviaQuestions()
+            allQuestions = repository.getTriviaQuestions(categoryId, difficulty)
 
             if (allQuestions.isNotEmpty()) {
                 // Mostramos las preguntas

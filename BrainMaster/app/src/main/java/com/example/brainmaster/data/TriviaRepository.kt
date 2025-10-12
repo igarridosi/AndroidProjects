@@ -8,13 +8,13 @@ class TriviaRepository {
     // Obtenemos la instancia del servicio de la API desde nuestro singleton.
     private val apiService = RetrofitClient.apiService
 
-    suspend fun getTriviaQuestions(): List<Question> {
+    suspend fun getTriviaQuestions(categoryId: Int, difficulty: String): List<Question> {
         return try {
             // Hacemos la llamada a la API con parámetros de ejemplo.
             val response = apiService.getQuestions(
                 amount = 10,
-                category = 9, // Categoría 9 es "General Knowledge"
-                difficulty = "medium",
+                category = categoryId,
+                difficulty = difficulty,
                 type = "multiple"
             )
 
