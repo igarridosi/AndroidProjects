@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:duration="400"
+    android:interpolator="@android:anim/decelerate_interpolator">
+
+    <!-- Mueve el elemento desde abajo hacia su posición original -->
+    <translate
+        android:fromYDelta="50%p"
+        android:toYDelta="0" />
+
+    <!-- Hace que el elemento pase de invisible a visible -->
+    <alpha
+        android:fromAlpha="0.0"
+        android:toAlpha="1.0" />
+
+</set>

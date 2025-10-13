@@ -32,7 +32,12 @@
         tools:layout="@layout/fragment_result" >
         <action
             android:id="@+id/action_resultFragment_to_mainMenuFragment"
-            app:destination="@id/mainMenuFragment" />
+            app:destination="@id/mainMenuFragment"
+
+            app:enterAnim="@anim/scale_fade_in"
+            app:exitAnim="@anim/scale_fade_out"
+            app:popEnterAnim="@anim/scale_fade_in"
+            app:popExitAnim="@anim/scale_fade_out"/>
     </fragment>
 
 </navigation>

@@ -5,6 +5,8 @@ import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.DecelerateInterpolator
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -61,12 +63,17 @@ class QuizFragment : Fragment() {
             binding.textViewQuestion.text = Html.fromHtml(question.question, Html.FROM_HTML_MODE_COMPACT)
         }
 
+        // Dentro de observeViewModel()
         viewModel.answers.observe(viewLifecycleOwner) { answers ->
-            // Asignamos el texto a cada botón.
+            // Asignamos el texto a cada botón PRIMERO
             binding.buttonAnswer1.text = Html.fromHtml(answers[0], Html.FROM_HTML_MODE_COMPACT)
             binding.buttonAnswer2.text = Html.fromHtml(answers[1], Html.FROM_HTML_MODE_COMPACT)
             binding.buttonAnswer3.text = Html.fromHtml(answers[2], Html.FROM_HTML_MODE_COMPACT)
             binding.buttonAnswer4.text = Html.fromHtml(answers[3], Html.FROM_HTML_MODE_COMPACT)
+
+            // AHORA, llamamos a la función de animación
+            val buttons = listOf(binding.buttonAnswer1, binding.buttonAnswer2, binding.buttonAnswer3, binding.buttonAnswer4)
+            animateAnswerButtons(buttons)
         }
 
         viewModel.score.observe(viewLifecycleOwner) { score ->
@@ -76,8 +83,15 @@ class QuizFragment : Fragment() {
 
         viewModel.isGameFinished.observe(viewLifecycleOwner) { isFinished ->
             if (isFinished) {
-                // Si el juego ha terminado, navegamos a la pantalla de resultados.
-                findNavController().navigate(R.id.action_quizFragment_to_resultFragment)
+                // 1. Obtenemos la puntuación final desde el ViewModel.
+                // El '?: 0' es una seguridad por si el valor fuera nulo.
+                val finalScore = viewModel.score.value ?: 0
+
+                // 2. Creamos un "paquete" para enviar los datos.
+                val bundle = bundleOf("FINAL_SCORE" to finalScore)
+
+                // 3. Navegamos, pasando el paquete.
+                findNavController().navigate(R.id.action_quizFragment_to_resultFragment, bundle)
             }
         }
         viewModel.answerResult.observe(viewLifecycleOwner) { result ->
@@ -137,6 +151,25 @@ class QuizFragment : Fragment() {
             button.setBackgroundColor(resources.getColor(com.google.android.material.R.color.design_default_color_primary, null))
             // Volvemos a habilitar los botones
             button.isEnabled = true
+        }
+    }
+
+    private fun animateAnswerButtons(buttons: List<View>) {
+        val delayBetweenButtons = 150L // Retraso de 150ms entre cada botón
+
+        buttons.forEachIndexed { index, view ->
+            // 1. Preparamos el estado inicial de cada botón: invisible y "fuera de la pantalla"
+            view.alpha = 0f
+            view.translationY = view.height.toFloat() // Lo movemos hacia abajo su propia altura
+
+            // 2. Creamos y configuramos la animación
+            view.animate()
+                .translationY(0f) // Lo devolvemos a su posición Y original
+                .alpha(1f) // Lo hacemos totalmente visible
+                .setStartDelay(index * delayBetweenButtons) // ¡La clave del efecto escalonado!
+                .setDuration(400L) // Duración de la animación de cada botón
+                .setInterpolator(DecelerateInterpolator()) // El mismo efecto suave del XML
+                .start()
         }
     }
 }

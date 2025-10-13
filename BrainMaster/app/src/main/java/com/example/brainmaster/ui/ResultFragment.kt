@@ -5,56 +5,53 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
 import com.example.brainmaster.R
+import com.example.brainmaster.databinding.FragmentResultBinding
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [ResultFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class ResultFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private var _binding: FragmentResultBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_result, container, false)
+    ): View {
+        _binding = FragmentResultBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment ResultFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            ResultFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        // 1. Recibimos la puntuación enviada desde el QuizFragment.
+        val finalScore = arguments?.getInt("FINAL_SCORE") ?: 0
+
+        // 2. Actualizamos el texto de la puntuación.
+        binding.textViewFinalScore.text = "Tu puntuación: $finalScore / 10"
+
+        // 3. Usamos 'when' para decidir qué imagen mostrar.
+        //    'when' es una forma más potente y legible de hacer 'if-else if-else'.
+        val imageResource = when (finalScore) {
+            in 8..10 -> R.drawable.excellent
+            in 6..7 -> R.drawable.notbad
+            in 4..5 -> R.drawable.meh
+            in 2..3 -> R.drawable.sad
+            else -> R.drawable.cry // Cubre los casos 0 y 1
+        }
+
+        // 4. Establecemos la imagen decidida en el ImageView.
+        binding.resultImageView.setImageResource(imageResource)
+
+        // 5. Configuramos el botón para volver a jugar.
+        binding.buttonPlayAgain.setOnClickListener {
+            findNavController().navigate(R.id.action_resultFragment_to_mainMenuFragment)
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
