@@ -3,6 +3,12 @@
     <style name="Base.Theme.BrainMaster" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+
+        <!-- 1. Le decimos el color que queremos para la barra de estado -->
+        <item name="android:statusBarColor">@color/button_orange</item>
+        <item name="android:navigationBarColor">@color/button_orange</item>
+
+
     </style>
 
     <style name="Theme.BrainMaster" parent="Base.Theme.BrainMaster" />

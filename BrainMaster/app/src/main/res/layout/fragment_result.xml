@@ -5,19 +5,32 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="28dp"
+    android:background="@drawable/background_cut"
     tools:context=".ui.ResultFragment">
+
+    <ImageView
+        android:id="@+id/textViewTitle"
+        android:layout_width="130dp"
+        android:layout_height="80dp"
+        android:src="@drawable/logo_quizz"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
 
     <TextView
         android:id="@+id/textViewResultTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="¡Game Finished!"
+        android:text="¡Game is Over!"
         android:textSize="34sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.2"
+        app:layout_constraintVertical_bias="0.35"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintVertical_chainStyle="packed"/>
 
@@ -30,7 +43,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textViewResultTitle"
-        tools:text="Tu puntuación: 1 / 10" />
+        tools:text="Your score: 1 / 10" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardViewImage"
@@ -54,12 +67,16 @@
 
     </androidx.cardview.widget.CardView>
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/buttonPlayAgain"
-        android:layout_width="wrap_content"
+        android:layout_width="170dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:text="Play Again"
+        android:textSize="18sp"
+        android:background="@drawable/custom_button_background"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/cardViewImage" />

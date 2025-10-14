@@ -5,4 +5,8 @@
 
     <color name="correct_green">#4CAF50</color>
     <color name="incorrect_red">#F44336</color>
+    <color name="text_color">#3C76E9</color>
+    <color name="stroke_color">#371048</color>
+    <color name="button_orange">#FFAC3A</color>
+
 </resources>

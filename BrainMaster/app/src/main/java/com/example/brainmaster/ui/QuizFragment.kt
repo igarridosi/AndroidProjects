@@ -78,7 +78,7 @@ class QuizFragment : Fragment() {
 
         viewModel.score.observe(viewLifecycleOwner) { score ->
             // Actualizamos el texto de la puntuación.
-            binding.textViewScore.text = "Puntuación: $score"
+            binding.textViewScore.text = "Score: $score"
         }
 
         viewModel.isGameFinished.observe(viewLifecycleOwner) { isFinished ->
@@ -96,6 +96,10 @@ class QuizFragment : Fragment() {
         }
         viewModel.answerResult.observe(viewLifecycleOwner) { result ->
             showAnswerFeedback(result)
+        }
+
+        viewModel.questionCounterText.observe(viewLifecycleOwner) { questionText ->
+            binding.textViewQuestionNumber.text = questionText
         }
     }
 
@@ -133,11 +137,11 @@ class QuizFragment : Fragment() {
             when {
                 // Si el texto del botón es la respuesta correcta, lo pintamos de verde
                 answerText == result.correctAnswer -> {
-                    button.setBackgroundColor(resources.getColor(R.color.correct_green, null))
+                    button.setBackgroundResource(R.drawable.correct_button_background)
                 }
                 // Si el texto del botón es la que el usuario eligió (y no es la correcta), lo pintamos de rojo
                 answerText == result.selectedAnswer -> {
-                    button.setBackgroundColor(resources.getColor(R.color.incorrect_red, null))
+                    button.setBackgroundResource(R.drawable.incorrect_button_background)
                 }
             }
         }
@@ -146,9 +150,9 @@ class QuizFragment : Fragment() {
     private fun resetButtonStates() {
         val buttons = listOf(binding.buttonAnswer1, binding.buttonAnswer2, binding.buttonAnswer3, binding.buttonAnswer4)
         for (button in buttons) {
-            // Restauramos el color de fondo por defecto (esto puede variar según tu tema)
-            // Una forma simple es usar el color primario de tu app.
-            button.setBackgroundColor(resources.getColor(com.google.android.material.R.color.design_default_color_primary, null))
+            // 1. Re-aplicamos nuestro drawable original desde res/drawable.
+            // Esto restaura el color naranja, el borde y la sombra.
+            button.setBackgroundResource(R.drawable.custom_button_background)
             // Volvemos a habilitar los botones
             button.isEnabled = true
         }
@@ -158,18 +162,19 @@ class QuizFragment : Fragment() {
         val delayBetweenButtons = 150L // Retraso de 150ms entre cada botón
 
         buttons.forEachIndexed { index, view ->
-            // 1. Preparamos el estado inicial de cada botón: invisible y "fuera de la pantalla"
-            view.alpha = 0f
-            view.translationY = view.height.toFloat() // Lo movemos hacia abajo su propia altura
+            view.post {
+                // 1. Preparamos el estado inicial de cada botón: invisible y "fuera de la pantalla"
+                view.alpha = 0f
+                view.translationY = view.height.toFloat() // Lo movemos hacia abajo su propia altura
 
-            // 2. Creamos y configuramos la animación
-            view.animate()
-                .translationY(0f) // Lo devolvemos a su posición Y original
-                .alpha(1f) // Lo hacemos totalmente visible
-                .setStartDelay(index * delayBetweenButtons) // ¡La clave del efecto escalonado!
-                .setDuration(400L) // Duración de la animación de cada botón
-                .setInterpolator(DecelerateInterpolator()) // El mismo efecto suave del XML
-                .start()
-        }
+                // 2. Creamos y configuramos la animación
+                view.animate()
+                    .translationY(0f) // Lo devolvemos a su posición Y original
+                    .alpha(1f) // Lo hacemos totalmente visible
+                    .setStartDelay(index * delayBetweenButtons) // ¡La clave del efecto escalonado!
+                    .setDuration(400L) // Duración de la animación de cada botón
+                    .setInterpolator(DecelerateInterpolator()) // El mismo efecto suave del XML
+                    .start()
+        }   }
     }
 }

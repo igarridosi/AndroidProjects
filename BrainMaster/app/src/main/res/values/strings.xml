@@ -1,13 +1,13 @@
 <resources>
     <string name="app_name">BrainMaster</string>
     <string-array name="quiz_categories">
-        <item>Conocimiento General</item>
-        <item>Películas</item>
-        <item>Música</item>
-        <item>Videojuegos</item>
-        <item>Ciencia y Naturaleza</item>
-        <item>Deportes</item>
-        <item>Geografía</item>
+        <item>General Knowlage</item>
+        <item>Movies</item>
+        <item>Music</item>
+        <item>Video Games</item>
+        <item>Science and nature</item>
+        <item>Sports</item>
+        <item>Geography</item>
     </string-array>
     <string-array name="quiz_difficulty">
         <item>Easy</item>

@@ -20,13 +20,13 @@ class MainMenuFragment : Fragment() {
 
     // Mapa para convertir el nombre de la categoría a su ID numérico de la API
     private val categoryMap = mapOf(
-        "Conocimiento General" to 9,
-        "Películas" to 11,
-        "Música" to 12,
-        "Videojuegos" to 15,
-        "Ciencia y Naturaleza" to 17,
-        "Deportes" to 21,
-        "Geografía" to 22
+        "General Knowlage" to 9,
+        "Movies" to 11,
+        "Music" to 12,
+        "Video Games" to 15,
+        "Science and nature" to 17,
+        "Sports" to 21,
+        "Geography" to 22
     )
 
     private val difficultyMap = mapOf(

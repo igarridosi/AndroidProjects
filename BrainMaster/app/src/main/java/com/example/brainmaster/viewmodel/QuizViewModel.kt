@@ -17,6 +17,7 @@ class QuizViewModel : ViewModel() {
     val answers = MutableLiveData<List<String>>()
     val score = MutableLiveData<Int>()
     val isGameFinished = MutableLiveData<Boolean>()
+    val questionCounterText = MutableLiveData<String>()
 
     val answerResult = MutableLiveData<AnswerResult>()
 
@@ -64,6 +65,8 @@ class QuizViewModel : ViewModel() {
         val answerList = question.incorrectAnswers.toMutableList()
         answerList.add(question.correctAnswer)
         answers.value = answerList.shuffled() // Ponemos la lista mezclada en su "caja"
+
+        questionCounterText.value = "Question ${currentQuestionIndex+1}/${allQuestions.size}"
     }
 
     // 6. Función que se llama cuando el usuario elige una respuesta.

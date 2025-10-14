@@ -29,7 +29,7 @@ class ResultFragment : Fragment() {
         val finalScore = arguments?.getInt("FINAL_SCORE") ?: 0
 
         // 2. Actualizamos el texto de la puntuación.
-        binding.textViewFinalScore.text = "Tu puntuación: $finalScore / 10"
+        binding.textViewFinalScore.text = "Your score: $finalScore / 10"
 
         // 3. Usamos 'when' para decidir qué imagen mostrar.
         //    'when' es una forma más potente y legible de hacer 'if-else if-else'.
