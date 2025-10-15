@@ -33,4 +33,23 @@ class TriviaRepository {
             emptyList()
         }
     }
+
+    suspend fun getNewQuestion(currentQuestions: List<Question>, categoryId: Int, difficulty: String): Question? {
+        // Intentamos hasta 5 veces para evitar un bucle infinito si la API no tiene más preguntas
+        repeat(5) {
+            try {
+                val response = apiService.getQuestions(1, categoryId, difficulty) // Pedimos solo 1 pregunta
+                if (response.isSuccessful && response.body()?.results?.isNotEmpty() == true) {
+                    val newQuestion = response.body()!!.results[0]
+                    // Comprobamos si la nueva pregunta ya está en nuestra lista actual
+                    if (!currentQuestions.contains(newQuestion)) {
+                        return newQuestion // Si no está, la devolvemos y terminamos
+                    }
+                }
+            } catch (e: Exception) {
+                return null
+            }
+        }
+        return null
+    }
 }

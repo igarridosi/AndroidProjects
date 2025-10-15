@@ -18,6 +18,9 @@ class QuizViewModel : ViewModel() {
     val score = MutableLiveData<Int>()
     val isGameFinished = MutableLiveData<Boolean>()
     val questionCounterText = MutableLiveData<String>()
+    val isFiftyFiftyAvailable = MutableLiveData<Boolean>(true)
+    val isSwapAvailable = MutableLiveData<Boolean>(true)
+    val answersToHide = MutableLiveData<List<String>>()
 
     val answerResult = MutableLiveData<AnswerResult>()
 
@@ -25,6 +28,9 @@ class QuizViewModel : ViewModel() {
     private val repository = TriviaRepository()
     private var allQuestions: List<Question> = emptyList()
     private var currentQuestionIndex: Int = 0
+
+    private var currentCategoryId: Int = 9
+    private var currentDifficulty: String = "medium"
 
     /*
     // 3. 'init' es un bloque que se ejecuta en cuanto se crea el ViewModel.
@@ -38,6 +44,9 @@ class QuizViewModel : ViewModel() {
 
     // 4. Función para empezar o reiniciar el juego.
     fun startGame(categoryId: Int, difficulty: String) {
+        this.currentCategoryId = categoryId
+        this.currentDifficulty = difficulty
+
         currentQuestionIndex = 0
         score.value = 0 // Ponemos el contenido de la caja "score" a 0
         isGameFinished.value = false // El juego no ha terminado
@@ -54,6 +63,10 @@ class QuizViewModel : ViewModel() {
             }
             isLoading.value = false // Avisamos que hemos terminado de cargar
         }
+
+        // PowerUps
+        isFiftyFiftyAvailable.value = true
+        isSwapAvailable.value = true
     }
 
     // 5. Función que prepara la siguiente pregunta para la pantalla.
@@ -92,6 +105,53 @@ class QuizViewModel : ViewModel() {
                 showNextQuestion()
             } else {
                 isGameFinished.value = true
+            }
+        }
+    }
+
+    fun useFiftyFifty() {
+        if (isFiftyFiftyAvailable.value != true) {
+            return
+        }
+        isFiftyFiftyAvailable.value = false
+
+        if (allQuestions.isNotEmpty()) {
+            //    Accedemos a la pregunta actual y cogemos su lista de respuestas incorrectas.
+            val currentQuestion = allQuestions[currentQuestionIndex]
+            val incorrectAnswers = currentQuestion.incorrectAnswers
+
+            //    '.shuffled()' es una función mágica de Kotlin que desordena la lista.
+            //    '.take(2)' coge los dos primeros elementos de esa lista ya desordenada.
+            //    Esto nos da dos respuestas incorrectas aleatorias de forma muy sencilla.
+            val answersToRemove = incorrectAnswers.shuffled().take(2)
+
+            //    Actualizamos el valor de nuestro LiveData 'answersToHide'.
+            //    El QuizFragment reaccionará ocultando los botones que contengan estos textos.
+            answersToHide.value = answersToRemove
+        }
+    }
+
+    fun useSwapQuestion() {
+        if (isSwapAvailable.value != true) {
+            return
+        }
+        isSwapAvailable.value = false
+
+        viewModelScope.launch {
+            // Le pasamos la categoría y dificultad que hemos guardado
+            val newQuestion = repository.getNewQuestion(
+                currentQuestions = allQuestions,
+                categoryId = currentCategoryId,
+                difficulty = currentDifficulty
+            )
+
+            if (newQuestion != null) {
+                val mutableQuestions = allQuestions.toMutableList()
+                mutableQuestions[currentQuestionIndex] = newQuestion
+                allQuestions = mutableQuestions.toList()
+                showNextQuestion()
+            } else {
+                isSwapAvailable.value = true // Devolvemos el power-up si falla
             }
         }
     }

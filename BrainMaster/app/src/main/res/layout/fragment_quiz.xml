@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.QuizFragment"
-    android:background="@drawable/background_cut">
+    android:background="@drawable/background_cut"
+    tools:context=".ui.QuizFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -29,31 +29,31 @@
             android:layout_width="130dp"
             android:layout_height="80dp"
             android:src="@drawable/logo_quizz"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.2"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintVertical_chainStyle="packed" />
 
         <TextView
             android:id="@+id/textViewQuestionNumber"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/white"
             android:textSize="22sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:textColor="@color/white"
             tools:text="Question 1/10" />
 
         <TextView
             android:id="@+id/textViewScore"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/white"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:textColor="@color/white"
             app:layout_constraintEnd_toEndOf="@id/textViewQuestionNumber"
             app:layout_constraintTop_toBottomOf="@id/textViewQuestionNumber"
             tools:text="Your Score: 0" />
@@ -66,23 +66,22 @@
             android:gravity="center"
             android:textSize="24sp"
             android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.3"
-            app:layout_constraintBottom_toBottomOf="parent"
             tools:text="¿Cuál es la capital de Francia?" />
 
         <LinearLayout
             android:id="@+id/answersContainer"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:layout_marginTop="32dp"
+            android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/textViewQuestion">
-
 
 
             <androidx.appcompat.widget.AppCompatButton
@@ -91,10 +90,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:background="@drawable/custom_button_background"
-                android:textColor="@android:color/white"
-                android:textStyle="bold"
                 android:textAllCaps="false"
+                android:textColor="@android:color/white"
                 android:textSize="18sp"
+                android:textStyle="bold"
                 tools:text="París" />
 
             <androidx.appcompat.widget.AppCompatButton
@@ -103,10 +102,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:background="@drawable/custom_button_background"
-                android:textColor="@android:color/white"
-                android:textStyle="bold"
                 android:textAllCaps="false"
+                android:textColor="@android:color/white"
                 android:textSize="18sp"
+                android:textStyle="bold"
                 tools:text="Londres" />
 
             <androidx.appcompat.widget.AppCompatButton
@@ -115,10 +114,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:background="@drawable/custom_button_background"
-                android:textColor="@android:color/white"
-                android:textStyle="bold"
                 android:textAllCaps="false"
+                android:textColor="@android:color/white"
                 android:textSize="18sp"
+                android:textStyle="bold"
                 tools:text="Madrid" />
 
             <androidx.appcompat.widget.AppCompatButton
@@ -127,11 +126,43 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:background="@drawable/custom_button_background"
-                android:textColor="@android:color/white"
-                android:textStyle="bold"
                 android:textAllCaps="false"
+                android:textColor="@android:color/white"
                 android:textSize="18sp"
+                android:textStyle="bold"
                 tools:text="Berlin" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/powerUpContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/answersContainer">
+
+            <ImageButton
+                android:id="@+id/powerUp1"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_margin="12dp"
+                android:padding="1dp"
+                android:background="@color/white"
+                android:scaleType="centerCrop"
+                android:src="@drawable/fifty_fifty" />
+
+            <ImageButton
+                android:id="@+id/powerUp2"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_margin="12dp"
+                android:padding="11dp"
+                android:background="@color/white"
+                android:scaleType="centerCrop"
+                android:src="@drawable/skip" />
 
         </LinearLayout>
 

@@ -48,6 +48,7 @@ class QuizFragment : Fragment() {
         // El resto de la función (observadores y clics) no cambia
         observeViewModel()
         setupButtonClicks()
+        setupPowerUpClicks()
     }
 
     private fun observeViewModel() {
@@ -101,6 +102,32 @@ class QuizFragment : Fragment() {
         viewModel.questionCounterText.observe(viewLifecycleOwner) { questionText ->
             binding.textViewQuestionNumber.text = questionText
         }
+
+        viewModel.isFiftyFiftyAvailable.observe(viewLifecycleOwner) { isAvailable ->
+            binding.powerUp1.isEnabled = isAvailable
+            // Hacemos que el botón se vea más transparente si no está disponible
+            binding.powerUp1.alpha = if (isAvailable) 1.0f else 0.5f
+        }
+
+        // Observador para saber si el "Skip" está disponible
+        viewModel.isSwapAvailable.observe(viewLifecycleOwner) { isAvailable ->
+            binding.powerUp2.isEnabled = isAvailable
+            binding.powerUp2.alpha = if (isAvailable) 1.0f else 0.5f
+        }
+
+        viewModel.answersToHide.observe(viewLifecycleOwner) { answersToHide ->
+            // Creamos una lista con nuestros 4 botones de respuesta
+            val answerButtons = listOf(binding.buttonAnswer1, binding.buttonAnswer2, binding.buttonAnswer3, binding.buttonAnswer4)
+
+            // Iteramos sobre los botones
+            for (button in answerButtons) {
+                // Si el texto del botón está en la lista de "respuestas a ocultar"...
+                if (button.text.toString() in answersToHide) {
+                    // ...lo hacemos invisible.
+                    button.visibility = View.GONE
+                }
+            }
+        }
     }
 
     private fun setupButtonClicks() {
@@ -149,12 +176,17 @@ class QuizFragment : Fragment() {
 
     private fun resetButtonStates() {
         val buttons = listOf(binding.buttonAnswer1, binding.buttonAnswer2, binding.buttonAnswer3, binding.buttonAnswer4)
+
         for (button in buttons) {
             // 1. Re-aplicamos nuestro drawable original desde res/drawable.
             // Esto restaura el color naranja, el borde y la sombra.
             button.setBackgroundResource(R.drawable.custom_button_background)
+
             // Volvemos a habilitar los botones
             button.isEnabled = true
+
+            // Nos aseguramos de que todos los botones sean visibles al empezar una nueva pregunta
+            button.visibility = View.VISIBLE
         }
     }
 
@@ -176,5 +208,16 @@ class QuizFragment : Fragment() {
                     .setInterpolator(DecelerateInterpolator()) // El mismo efecto suave del XML
                     .start()
         }   }
+    }
+
+    // Añade esta función a tu clase QuizFragment
+    private fun setupPowerUpClicks() {
+        binding.powerUp1.setOnClickListener {
+            viewModel.useFiftyFifty()
+        }
+
+        binding.powerUp2.setOnClickListener {
+            viewModel.useSwapQuestion()
+        }
     }
 }
