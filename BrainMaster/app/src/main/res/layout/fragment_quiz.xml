@@ -36,6 +36,18 @@
             app:layout_constraintVertical_bias="0.2"
             app:layout_constraintVertical_chainStyle="packed" />
 
+        <ImageButton
+            android:id="@+id/homeButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@color/button_orange"
+            android:padding="1dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/home"
+            app:layout_constraintStart_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <TextView
             android:id="@+id/textViewQuestionNumber"
             android:layout_width="wrap_content"
@@ -149,8 +161,8 @@
                 android:layout_width="70dp"
                 android:layout_height="70dp"
                 android:layout_margin="12dp"
-                android:padding="1dp"
                 android:background="@color/white"
+                android:padding="1dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/fifty_fifty" />
 
@@ -159,8 +171,8 @@
                 android:layout_width="70dp"
                 android:layout_height="70dp"
                 android:layout_margin="12dp"
-                android:padding="11dp"
                 android:background="@color/white"
+                android:padding="11dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/skip" />
 

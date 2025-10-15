@@ -143,6 +143,9 @@ class QuizFragment : Fragment() {
         binding.buttonAnswer4.setOnClickListener {
             viewModel.onAnswerSelected(binding.buttonAnswer4.text.toString())
         }
+        binding.homeButton.setOnClickListener {
+            findNavController().navigate(R.id.action_quizFragment_to_mainMenuFragment)
+        }
     }
 
     override fun onDestroyView() {
