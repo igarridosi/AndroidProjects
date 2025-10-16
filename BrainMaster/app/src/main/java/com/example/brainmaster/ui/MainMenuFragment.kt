@@ -69,6 +69,7 @@ class MainMenuFragment : Fragment() {
         binding.buttonStart.setOnClickListener {
             // 1. Leemos el texto seleccionado en el menú
             val selectedCategoryName = binding.autoCompleteTextView1.text.toString()
+            val finalCategoryName = selectedCategoryName.ifBlank { "General Knolage" }
             val selectedDifficultyName = binding.autoCompleteTextView2.text.toString()
 
             // 2. Buscamos su ID en el mapa. Si no se ha elegido nada, usamos 9 (Conocimiento General) por defecto.

@@ -41,7 +41,6 @@ class QuizViewModel : ViewModel() {
 
      */
 
-
     // 4. Función para empezar o reiniciar el juego.
     fun startGame(categoryId: Int, difficulty: String) {
         this.currentCategoryId = categoryId

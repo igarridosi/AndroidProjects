@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:padding="28dp"
     android:background="@drawable/background_cut"
+    android:padding="28dp"
     tools:context=".ui.MainMenuFragment">
 
     <!-- Título de la aplicación -->
     <ImageView
-        android:id="@+id/textViewTitle"
+        android:id="@+id/logoImage"
         android:layout_width="220dp"
         android:layout_height="120dp"
         android:src="@drawable/logo_quizz"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.3"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintVertical_chainStyle="packed" />
 
     <com.google.android.material.textfield.TextInputLayout
@@ -27,15 +27,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
+        app:boxBackgroundColor="@color/dropdownBackgroundColor"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textViewTitle">
+        app:layout_constraintTop_toBottomOf="@id/logoImage">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:hint="Choose the Category"
+            android:text="Choose the Category"
             android:textSize="12sp"
-            android:textStyle="bold"/>
+            android:textColor="@color/textColorSecondary"
+            android:textStyle="bold" />
+
         <AutoCompleteTextView
             android:id="@+id/autoCompleteTextView1"
             android:layout_width="match_parent"
@@ -43,7 +46,7 @@
             android:layout_weight="1"
             android:inputType="none"
             android:text="General Knowledge"
-            />
+            android:textColor="@color/textColorPrimary" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -53,15 +56,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
+        app:boxBackgroundColor="@color/dropdownBackgroundColor"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/categoryTextInputLayoutCategory">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:hint="Choose the Difficulty"
+            android:text="Choose the Difficulty"
+            android:textColor="@color/textColorSecondary"
             android:textSize="12sp"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
 
         <AutoCompleteTextView
             android:id="@+id/autoCompleteTextView2"
@@ -70,7 +75,7 @@
             android:layout_weight="1"
             android:inputType="none"
             android:text="Easy"
-            />
+            android:textColor="@color/textColorPrimary" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -80,10 +85,10 @@
         android:layout_width="170dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:text="Start Quiz"
-        android:textSize="18sp"
         android:background="@drawable/custom_button_background"
+        android:text="Start Quiz"
         android:textColor="@android:color/white"
+        android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
