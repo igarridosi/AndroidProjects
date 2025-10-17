@@ -79,6 +79,7 @@ class MainMenuFragment : Fragment() {
             // 3. Creamos un "paquete" (Bundle) para enviar el ID a la siguiente pantalla
             val bundle = bundleOf(
                 "CATEGORY_ID" to selectedCategoryId,
+                "CATEGORY_NAME" to finalCategoryName,
                 "DIFFICULTY" to selectedDifficulty
             )
             Log.v("Difficulty", selectedDifficulty.toString())

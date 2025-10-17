@@ -1,5 +1,6 @@
 package com.example.brainmaster.ui
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -55,6 +56,15 @@ class QuizViewModel : ViewModel() {
         viewModelScope.launch {
             isLoading.value = true // Avisamos a la pantalla que estamos cargando
             allQuestions = repository.getTriviaQuestions(categoryId, difficulty)
+
+            /*
+            // DEBUGGER
+            Log.d("API_DATA_CHECK", "--- Preguntas Recibidas de la API ---")
+            allQuestions.forEachIndexed { index, question ->
+                // Imprimimos la respuesta correcta EXACTA que nos dio la API
+                Log.d("API_DATA_CHECK", "Pregunta ${index + 1}: '${question.question}' -> Respuesta Correcta de la API: '${question.correctAnswer}'")
+            }
+             */
 
             if (allQuestions.isNotEmpty()) {
                 // Mostramos las preguntas

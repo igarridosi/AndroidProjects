@@ -2,6 +2,7 @@ package com.example.brainmaster.ui
 
 import android.os.Bundle
 import android.text.Html
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -42,8 +43,13 @@ class QuizFragment : Fragment() {
         val categoryId = arguments?.getInt("CATEGORY_ID") ?: 9
         val difficulty = arguments?.getString("DIFFICULTY") ?: "easy"
 
+        // Recibimos el nombre de la categoría
+        val categoryName = arguments?.getString("CATEGORY_NAME") ?: "Categoría Desconocida"
+
         // 2. Le pasamos el ID al ViewModel para que empiece el juego con la categoría correcta
         viewModel.startGame(categoryId, difficulty)
+
+        binding.textViewCategory.text = "$categoryName"
 
         // El resto de la función (observadores y clics) no cambia
         observeViewModel()
@@ -155,8 +161,18 @@ class QuizFragment : Fragment() {
     }
 
     private fun showAnswerFeedback(result: AnswerResult) {
+        /*
+        // DEBUGGER
+        Log.d("FEEDBACK_LOGIC_CHECK", "--- Verificando Respuesta para la UI ---")
+        Log.d("FEEDBACK_LOGIC_CHECK", "El usuario seleccionó: '${result.selectedAnswer}'")
+        Log.d("FEEDBACK_LOGIC_CHECK", "La lógica cree que la respuesta correcta es: '${result.correctAnswer}'")
+         */
+
         // Obtenemos una lista de todos los botones para iterar sobre ellos
         val buttons = listOf(binding.buttonAnswer1, binding.buttonAnswer2, binding.buttonAnswer3, binding.buttonAnswer4)
+
+        val correctAnswer = result.correctAnswer
+        val selectedAnswer = result.selectedAnswer
 
         for (button in buttons) {
             // Deshabilitamos todos los botones para que el usuario no pueda hacer clic de nuevo
@@ -164,15 +180,15 @@ class QuizFragment : Fragment() {
 
             val answerText = button.text.toString()
 
-            when {
-                // Si el texto del botón es la respuesta correcta, lo pintamos de verde
-                answerText == result.correctAnswer -> {
-                    button.setBackgroundResource(R.drawable.correct_button_background)
-                }
-                // Si el texto del botón es la que el usuario eligió (y no es la correcta), lo pintamos de rojo
-                answerText == result.selectedAnswer -> {
-                    button.setBackgroundResource(R.drawable.incorrect_button_background)
-                }
+            // PRIMERA PREGUNTA: ¿Es este botón la respuesta correcta?
+            // Si lo es, SIEMPRE se pinta de verde.
+            if (answerText == correctAnswer) {
+                button.setBackgroundResource(R.drawable.correct_button_background)
+            }
+            // SEGUNDA PREGUNTA (independiente de la primera):
+            // ¿Es este botón la respuesta que el usuario eligió, Y ADEMÁS, es incorrecta?
+            if (answerText == selectedAnswer && selectedAnswer != correctAnswer) {
+                button.setBackgroundResource(R.drawable.incorrect_button_background)
             }
         }
     }

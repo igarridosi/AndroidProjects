@@ -71,10 +71,23 @@
             tools:text="Your Score: 0" />
 
         <TextView
+            android:id="@+id/textViewCategory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:layout_marginTop="20dp"
+            android:textColor="@color/textColorSecondary"
+            android:textStyle="italic"
+            app:layout_constraintBottom_toTopOf="@id/textViewQuestion"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/logoImage"
+            tools:text="Geography" />
+
+        <TextView
             android:id="@+id/textViewQuestion"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="70dp"
             android:gravity="center"
             android:textColor="@color/textColorPrimary"
             android:textSize="24sp"
@@ -83,22 +96,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.3"
+            app:layout_constraintVertical_bias="0.4"
             tools:text="¿Cuál es la capital de Francia?" />
-
-        <TextView
-            android:id="@+id/categoryName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
-            android:textSize="14sp"
-            android:textColor="@color/textColorSecondary"
-            android:textStyle="italic"
-            app:layout_constraintBottom_toBottomOf="@id/textViewQuestion"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/logoImage"
-            tools:text="Geography" />
 
         <LinearLayout
             android:id="@+id/answersContainer"
