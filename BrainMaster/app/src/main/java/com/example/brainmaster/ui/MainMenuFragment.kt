@@ -50,33 +50,33 @@ class MainMenuFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // --- Configuración del Menú Desplegable ---
-        // 1. Obtenemos la lista de categorías desde strings.xml
+        // Obtener la lista de categorías desde strings.xml
         val categories = resources.getStringArray(R.array.quiz_categories)
         val difficulties = resources.getStringArray(R.array.quiz_difficulty)
 
-        // 2. Creamos un Adapter, que es el puente entre la lista y la UI del menú
+        // Crear un Adapter, que es el puente entre la lista y la UI del menú
         val adapterCategory =
             ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, categories)
         val adapterDifficulty =
             ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, difficulties)
 
-        // 3. Asignamos el adapter a nuestro AutoCompleteTextView
+        // Asignar el adapter a nuestro AutoCompleteTextView
         binding.autoCompleteTextView1.setAdapter(adapterCategory)
         binding.autoCompleteTextView2.setAdapter(adapterDifficulty)
 
 
         // --- Configuración del Clic del Botón ---
         binding.buttonStart.setOnClickListener {
-            // 1. Leemos el texto seleccionado en el menú
+            // Leer el texto seleccionado en el menú
             val selectedCategoryName = binding.autoCompleteTextView1.text.toString()
             val finalCategoryName = selectedCategoryName.ifBlank { "General Knolage" }
             val selectedDifficultyName = binding.autoCompleteTextView2.text.toString()
 
-            // 2. Buscamos su ID en el mapa. Si no se ha elegido nada, usamos 9 (Conocimiento General) por defecto.
+            // Buscar su ID en el mapa. Si no se ha elegido nada, usamos 9 (Conocimiento General) por defecto.
             val selectedCategoryId = categoryMap[selectedCategoryName] ?: 9
             val selectedDifficulty = difficultyMap[selectedDifficultyName] ?: "easy"
 
-            // 3. Creamos un "paquete" (Bundle) para enviar el ID a la siguiente pantalla
+            // Crear un "paquete" (Bundle) para enviar el ID a la siguiente pantalla
             val bundle = bundleOf(
                 "CATEGORY_ID" to selectedCategoryId,
                 "CATEGORY_NAME" to finalCategoryName,
@@ -84,14 +84,14 @@ class MainMenuFragment : Fragment() {
             )
             Log.v("Difficulty", selectedDifficulty.toString())
 
-            // 4. Navegamos, pasando el paquete con los datos
+            // Navegar, pasando el paquete con los datos
             findNavController().navigate(R.id.action_mainMenuFragment_to_quizFragment, bundle)
         }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        // 4. Limpiamos el binding.
+        // Limpiar los datos del binding.
         _binding = null
     }
 }

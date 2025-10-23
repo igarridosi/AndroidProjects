@@ -78,7 +78,7 @@ class QuizViewModel : ViewModel() {
         isSwapAvailable.value = true
     }
 
-    // 5. Función que prepara la siguiente pregunta para la pantalla.
+    // Funcion que prepara la siguiente pregunta para la pantalla.
     private fun showNextQuestion() {
         val question = allQuestions[currentQuestionIndex]
         currentQuestion.value = question // Ponemos la pregunta en su "caja"
@@ -91,24 +91,24 @@ class QuizViewModel : ViewModel() {
         questionCounterText.value = "Question ${currentQuestionIndex+1}/${allQuestions.size}"
     }
 
-    // 6. Función que se llama cuando el usuario elige una respuesta.
+    // Función que se llama cuando el usuario elige una respuesta.
     fun onAnswerSelected(selectedAnswer: String) {
         val question = allQuestions[currentQuestionIndex]
         val correctAnswer = question.correctAnswer
 
-        // 1. Informamos al Fragment sobre el resultado para que pinte los colores.
+        // Informa al Fragment sobre el resultado para que pinte los colores.
         answerResult.value = AnswerResult(selectedAnswer, correctAnswer)
 
-        // 2. Comprobamos si la respuesta es correcta y actualizamos la puntuación.
+        // Comprueba si la respuesta es correcta y actualizamos la puntuación.
         if (selectedAnswer == correctAnswer) {
             score.value = (score.value ?: 0) + 1
         }
 
-        // 3. Lanzamos una nueva corrutina para la pausa.
+        // Lanza una nueva corrutina ('helpers' (en segundo plano)) para la pausa.
         viewModelScope.launch {
             delay(2000)
 
-            // 4. Después de la pausa, continuamos con la lógica del juego.
+            // Después de la pausa (delay=2000), continuamos con la lógica del juego.
             if (currentQuestionIndex < allQuestions.size - 1) {
                 currentQuestionIndex++
                 showNextQuestion()
