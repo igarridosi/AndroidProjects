@@ -3,27 +3,32 @@ package com.example.oroiapp
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.oroiapp.ui.theme.OroiAppTheme
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.oroiapp.ui.AddEditScreen
+import com.example.oroiapp.ui.MainScreen
+import com.example.oroiapp.ui.theme.OroiTheme
+import com.example.oroiapp.viewmodel.AddEditViewModel
+import com.example.oroiapp.viewmodel.MainViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContent {
-            OroiAppTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+            OroiTheme {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    OroiApp()
                 }
             }
         }
@@ -31,17 +36,35 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+fun OroiApp() {
+    // 1. Lortu Application instantzia modu zuzenean Composable baten barruan
+    val context = LocalContext.current
+    val application = context.applicationContext as OroiApplication
+    val factory = application.viewModelFactory
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    OroiAppTheme {
-        Greeting("Android")
+    // 2. Erabili factory-a ViewModel-ak lortzeko
+    val mainViewModel: MainViewModel = viewModel(factory = factory)
+    val addEditViewModel: AddEditViewModel = viewModel(factory = factory)
+
+    val navController = rememberNavController()
+
+    NavHost(navController = navController, startDestination = "main_screen") {
+        composable("main_screen") {
+            MainScreen(
+                viewModel = mainViewModel,
+                onAddSubscription = {
+                    navController.navigate("add_edit_screen")
+                }
+            )
+        }
+
+        composable("add_edit_screen") {
+            AddEditScreen(
+                viewModel = addEditViewModel,
+                onNavigateBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
     }
 }
