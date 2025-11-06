@@ -1,3 +1,5 @@
+// settings.gradle.kts (VERSIÓN FINAL Y CORRECTA)
+
 pluginManagement {
     repositories {
         google {
@@ -21,4 +23,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "OroiApp"
 include(":app")
- 
