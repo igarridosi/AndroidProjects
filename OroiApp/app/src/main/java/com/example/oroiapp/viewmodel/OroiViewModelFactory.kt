@@ -1,25 +1,42 @@
 package com.example.oroiapp.viewmodel
 
+import android.os.Bundle
+import androidx.lifecycle.AbstractSavedStateViewModelFactory
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.createSavedStateHandle
+import androidx.lifecycle.viewmodel.CreationExtras
+import androidx.savedstate.SavedStateRegistryOwner
 import com.example.oroiapp.data.SubscriptionDao
 
-class OroiViewModelFactory(private val dao: SubscriptionDao) : ViewModelProvider.Factory {
+// Factory-a objektu gisa definituko dugu, erabilera errazteko
+object OroiViewModelFactory : ViewModelProvider.Factory {
 
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        // Egiaztatu eskatutako ViewModel-a gure proiektukoa den
-        if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
-            // MainViewModel eskatzen badu, sortu eta itzuli, dao-a pasatuz
-            @Suppress("UNCHECKED_CAST")
-            return MainViewModel(dao) as T
-        }
-        if (modelClass.isAssignableFrom(AddEditViewModel::class.java)) {
-            // AddEditViewModel eskatzen badu, sortu eta itzuli
-            @Suppress("UNCHECKED_CAST")
-            return AddEditViewModel(dao) as T
-        }
+    // 'lateinit' erabiliko dugu DAO-a geroago ezartzeko
+    lateinit var dao: SubscriptionDao
 
-        // Eskatutako ViewModel-a ezagutzen ez badu, errore bat bota
-        throw IllegalArgumentException("Unknown ViewModel class")
+    override fun <T : ViewModel> create(
+        modelClass: Class<T>,
+        extras: CreationExtras // Mekanismo modernoa
+    ): T {
+        // Sistemak emandako 'extras'-etatik lortzen dugu 'SavedStateHandle' zuzena
+        val savedStateHandle = extras.createSavedStateHandle()
+
+        // Egiaztatu zein ViewModel sortu behar den
+        return when {
+            modelClass.isAssignableFrom(MainViewModel::class.java) -> {
+                MainViewModel(dao) as T
+            }
+            modelClass.isAssignableFrom(AddEditViewModel::class.java) -> {
+                AddEditViewModel(dao, savedStateHandle) as T
+            }
+            modelClass.isAssignableFrom(EditSubscriptionViewModel::class.java) -> {
+                EditSubscriptionViewModel(dao, savedStateHandle) as T
+            }
+            else -> {
+                throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
+            }
+        }
     }
 }

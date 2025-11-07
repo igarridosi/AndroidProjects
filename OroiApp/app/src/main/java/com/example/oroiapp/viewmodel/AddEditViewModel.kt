@@ -1,5 +1,6 @@
 package com.example.oroiapp.viewmodel
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.oroiapp.data.SubscriptionDao
@@ -20,10 +21,75 @@ data class SubscriptionFormState(
     val firstPaymentDate: Date = Date() // Gaurko data lehenetsi bezala
 )
 
-class AddEditViewModel(private val subscriptionDao: SubscriptionDao) : ViewModel() {
+class AddEditViewModel(
+    private val subscriptionDao: SubscriptionDao,
+    private val savedStateHandle: SavedStateHandle
+) : ViewModel() {
 
     private val _formState = MutableStateFlow(SubscriptionFormState())
     val formState = _formState.asStateFlow()
+
+    private val _isEditing = MutableStateFlow(false)
+    val isEditing = _isEditing.asStateFlow()
+
+    private var editingSubscriptionId: Int? = null
+
+    // ORAIN INIT ERABIL DEZAKEGU, ViewModel-a beti berria delako
+    init {
+        val subscriptionId = savedStateHandle.get<String>("subscriptionId")?.toIntOrNull()
+        if (subscriptionId != null) {
+            _isEditing.value = true
+            editingSubscriptionId = subscriptionId
+            loadSubscriptionData(subscriptionId)
+        }
+        // `else` kasuan ez da ezer egin behar, egoera lehenetsia hutsik dagoelako.
+    }
+
+    private fun loadSubscriptionData(id: Int) {
+        viewModelScope.launch {
+            val subscription = subscriptionDao.getSubscriptionById(id)
+            if (subscription != null) {
+                _formState.update {
+                    it.copy(
+                        name = subscription.name,
+                        amount = subscription.amount.toString(),
+                        currency = subscription.currency,
+                        billingCycle = subscription.billingCycle,
+                        firstPaymentDate = subscription.firstPaymentDate
+                    )
+                }
+            }
+        }
+    }
+
+    fun saveSubscription(onSuccess: () -> Unit) {
+        // ZUZENDUTA: Bere barne-egoera erabiltzen du, ez parametroak
+        val state = _formState.value
+        if (state.name.isBlank() || state.amount.isBlank()) return
+
+        val subscriptionToSave = Subscription(
+            id = 0,
+            name = state.name,
+            amount = state.amount.toDouble(),
+            currency = state.currency,
+            billingCycle = state.billingCycle,
+            firstPaymentDate = state.firstPaymentDate
+        )
+        viewModelScope.launch {
+            subscriptionDao.insert(subscriptionToSave)
+            onSuccess()
+        }
+    }
+
+    fun deleteSubscription(onSuccess: () -> Unit) {
+        editingSubscriptionId?.let { id ->
+            viewModelScope.launch {
+                val sub = Subscription(id = id, name = "", amount = 0.0, currency = "", billingCycle = BillingCycle.MONTHLY, firstPaymentDate = Date())
+                subscriptionDao.delete(sub)
+                onSuccess()
+            }
+        }
+    }
 
     fun onNameChange(newName: String) {
         _formState.update { it.copy(name = newName) }
@@ -46,28 +112,5 @@ class AddEditViewModel(private val subscriptionDao: SubscriptionDao) : ViewModel
 
     fun onDateChange(newDate: Date) {
         _formState.update { it.copy(firstPaymentDate = newDate) }
-    }
-
-    // Harpidetza datu-basean gordetzeko funtzioa
-    fun saveSubscription(onSuccess: () -> Unit) {
-        val state = _formState.value
-        if (state.name.isBlank() || state.amount.isBlank()) {
-            // Balidazio sinplea: izena eta kopurua ezin dira hutsik egon
-            return
-        }
-
-        val subscriptionToSave = Subscription(
-            name = state.name,
-            amount = state.amount.toDouble(),
-            currency = state.currency,
-            billingCycle = state.billingCycle,
-            firstPaymentDate = state.firstPaymentDate
-        )
-
-        viewModelScope.launch {
-            subscriptionDao.insert(subscriptionToSave)
-            // onSUCCESS deitu nabigazioa kudeatzeko
-            onSuccess()
-        }
     }
 }

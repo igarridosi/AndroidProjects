@@ -1,0 +1,61 @@
+# =========================================
+# Fitxategi hau automatikoki sortutako fitxategiak,
+# fitxategi lokalak eta sentikorrak bertsio-kontroletik
+# kanpo uzteko erabiltzen da.
+# =========================================
+
+# Menpekotasunak eta cache-a
+# Bakoitzak bere ordenagailuan sortzen ditu
+.gradle/
+build/
+/captures/
+.cxx/
+
+# IDE fitxategiak (Android Studio, IntelliJ)
+# Proiektuaren konfigurazio lokalak gordetzen dituzte
+*.iml
+*.ipr
+*.iws
+.idea/
+.idea/caches/
+.idea/libraries/
+.idea/misc.xml
+.idea/modules.xml
+.idea/runConfigurations/
+.idea/vcs.xml
+.idea/workspace.xml
+.idea/assetWizardSettings.xml
+.idea/navEditor.xml
+.idea/gradle.xml
+
+# Fitxategi lokalak
+# SDK-aren kokapena edo API gakoak gordetzen ditu. EZ DA INOIZ PARTEKATU BEHAR
+local.properties
+
+# Aplikazioaren paketeak (APK/AAB) eta konpilazio-emaitzak
+*.apk
+*.aab
+*.ap_
+*.jar
+*.so
+*.a
+
+# Sinadura digitalaren fitxategiak (OSO GARRANTZITSUA KANPO UZTEA)
+# Zure aplikazioa sinatzeko gako pribatuak dira
+*.keystore
+*.jks
+*.cer
+
+# Proguard fitxategiak (mapping-a gordetzen dute)
+proguard/
+*mapping.txt
+
+# Google Services (konfigurazio lokalak)
+google-services.json
+
+# Sistema eragilearen fitxategiak
+.DS_Store
+Thumbs.db
+
+# Lint txostenak
+lint/reports/*

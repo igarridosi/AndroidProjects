@@ -21,4 +21,8 @@ interface SubscriptionDao {
     // Harpidetza bat ezabatzen du
     @Delete
     suspend fun delete(subscription: Subscription)
+
+    // Harpidetza bakarra bere IDaren bidez lortzeko funtzioa
+    @Query("SELECT * FROM subscriptions WHERE id = :id")
+    suspend fun getSubscriptionById(id: Int): Subscription?
 }
