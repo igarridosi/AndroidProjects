@@ -21,6 +21,8 @@ import com.example.oroiapp.viewmodel.AddEditViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.Date
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -31,6 +33,14 @@ fun AddEditScreen(
     // EZ DAGO EGOERA LOKALIK.
     val formState by viewModel.formState.collectAsState()
     val focusManager = LocalFocusManager.current
+    val scope = rememberCoroutineScope()
+
+    val shouldNavigateBack by viewModel.navigateBack.collectAsState()
+    LaunchedEffect(shouldNavigateBack) {
+        if (shouldNavigateBack) {
+            onNavigateBack()
+        }
+    }
 
     Scaffold(
         topBar = { /* ... */ }
@@ -64,7 +74,7 @@ fun AddEditScreen(
             Button(
                 onClick = {
                     focusManager.clearFocus()
-                    viewModel.saveSubscription { onNavigateBack() }
+                    viewModel.saveSubscription() // Jada ez du callback-ik hartzen
                 },
                 modifier = Modifier.fillMaxWidth()
             ) { Text("Gorde Harpidetza") }

@@ -29,6 +29,9 @@ class AddEditViewModel(
     private val _formState = MutableStateFlow(SubscriptionFormState())
     val formState = _formState.asStateFlow()
 
+    private val _navigateBack = MutableStateFlow(false)
+    val navigateBack = _navigateBack.asStateFlow()
+
     private val _isEditing = MutableStateFlow(false)
     val isEditing = _isEditing.asStateFlow()
 
@@ -62,22 +65,22 @@ class AddEditViewModel(
         }
     }
 
-    fun saveSubscription(onSuccess: () -> Unit) {
-        // ZUZENDUTA: Bere barne-egoera erabiltzen du, ez parametroak
-        val state = _formState.value
-        if (state.name.isBlank() || state.amount.isBlank()) return
-
-        val subscriptionToSave = Subscription(
-            id = 0,
-            name = state.name,
-            amount = state.amount.toDouble(),
-            currency = state.currency,
-            billingCycle = state.billingCycle,
-            firstPaymentDate = state.firstPaymentDate
-        )
+    fun saveSubscription() {
         viewModelScope.launch {
+            val state = _formState.value
+            if (state.name.isBlank() || state.amount.isBlank()) return@launch
+
+            val subscriptionToSave = Subscription(
+                id = 0,
+                name = state.name,
+                amount = state.amount.toDouble(),
+                currency = state.currency,
+                billingCycle = state.billingCycle,
+                firstPaymentDate = state.firstPaymentDate
+            )
             subscriptionDao.insert(subscriptionToSave)
-            onSuccess()
+
+            _navigateBack.value = true
         }
     }
 

@@ -8,25 +8,22 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.oroiapp.ui.AddEditScreen
+import com.example.oroiapp.ui.EditSubscriptionScreen
 import com.example.oroiapp.ui.MainScreen
 import com.example.oroiapp.ui.theme.OroiTheme
 import com.example.oroiapp.viewmodel.AddEditViewModel
-import com.example.oroiapp.viewmodel.MainViewModel
-import androidx.navigation.NavType
-import androidx.navigation.navArgument
-import com.example.oroiapp.ui.EditSubscriptionScreen
 import com.example.oroiapp.viewmodel.EditSubscriptionViewModel
+import com.example.oroiapp.viewmodel.MainViewModel
 import com.example.oroiapp.viewmodel.OroiViewModelFactory
-import android.util.Log
 
-private const val TAG = "OROI_DEBUG"
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,7 +33,6 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    // Factory objektua zuzenean pasatzen dugu
                     OroiApp(OroiViewModelFactory)
                 }
             }
@@ -71,13 +67,14 @@ fun OroiApp(factory: ViewModelProvider.Factory) {
             arguments = listOf(navArgument("subscriptionId") { type = NavType.IntType })
         ) { backStackEntry ->
 
-            // Lortu ID-a nabigazio-argudioetatik.
+
+            // 1. Lortu ID-a nabigazio-argudioetatik.
             val subscriptionId = backStackEntry.arguments?.getInt("subscriptionId")
 
-            // Erabili ID hori ViewModel-a sortzeko GAKO (key) gisa.
-            // Horrela, IDa aldatzen den bakoitzean, ViewModel BERRI bat sortuko da.
+            // 2. Erabili ID hori ViewModel-a sortzeko GAKO (key) gisa.
+            //    Horrela, IDa aldatzen den bakoitzean, ViewModel BERRI bat sortuko da.
             val editViewModel: EditSubscriptionViewModel = viewModel(
-                key = subscriptionId?.toString(), // Gakoa ezinbestekoa da
+                key = subscriptionId?.toString(), // GAKOA EZINBESTEKOA DA
                 factory = factory
             )
 

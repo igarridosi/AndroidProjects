@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import com.example.oroiapp.viewmodel.EditSubscriptionViewModel
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -17,9 +18,15 @@ fun EditSubscriptionScreen(
     viewModel: EditSubscriptionViewModel,
     onNavigateBack: () -> Unit
 ) {
-    // 1. EZ DAGO EGOERA LOKALIK. ViewModel-arena da iturri bakarra.
+
     val formState by viewModel.formState.collectAsState()
     val focusManager = LocalFocusManager.current
+
+    LaunchedEffect(Unit) {
+        viewModel.navigationEvent.collect {
+            onNavigateBack()
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -68,7 +75,7 @@ fun EditSubscriptionScreen(
             Button(
                 onClick = {
                     focusManager.clearFocus()
-                    viewModel.saveSubscription { onNavigateBack() }
+                    viewModel.saveSubscription() // Jada ez du callback-ik hartzen
                 },
                 modifier = Modifier.fillMaxWidth()
             ) { Text("Gorde Aldaketak") }
@@ -78,7 +85,7 @@ fun EditSubscriptionScreen(
             OutlinedButton(
                 onClick = {
                     focusManager.clearFocus()
-                    viewModel.deleteSubscription { onNavigateBack() }
+                    viewModel.deleteSubscription() // Jada ez du callback-ik hartzen
                 },
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.error),

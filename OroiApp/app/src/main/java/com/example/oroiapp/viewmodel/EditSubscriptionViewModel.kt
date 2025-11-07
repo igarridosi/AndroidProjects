@@ -10,6 +10,9 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.util.Date
 import android.util.Log
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 private const val TAG = "OROI_DEBUG"
 
@@ -22,16 +25,12 @@ class EditSubscriptionViewModel(
     val formState = _formState.asStateFlow()
 
     // IDa ezin da null izan editatzeko pantailan
-    private val editingSubscriptionId: Int
+    private val _navigationChannel = Channel<Unit>()
+    val navigationEvent = _navigationChannel.receiveAsFlow()
+
+    private val editingSubscriptionId: Int = checkNotNull(savedStateHandle["subscriptionId"])
 
     init {
-        // DEBUG: Ikusi ea ViewModel-a ID-a jasotzen ari den sortzean
-        val receivedId = savedStateHandle.get<Int>("subscriptionId")
-        Log.d(TAG, "[VM INIT] EditViewModel sortzen. Jasotako ID-a: $receivedId")
-
-        editingSubscriptionId = checkNotNull(receivedId) { "subscriptionId ezinbestekoa da editatzeko." }
-
-        Log.d(TAG, "[VM INIT] ID-a kargatuko da: $editingSubscriptionId")
         loadSubscriptionData()
     }
 
@@ -54,35 +53,33 @@ class EditSubscriptionViewModel(
         }
     }
 
-    fun saveSubscription(onSuccess: () -> Unit) {
-        val state = _formState.value
-        // DEBUG: Ikusi zer gordetzen saiatzen ari garen
-        Log.d(TAG, "[VM SAVE] Gorde sakatuta. Gordetzeko izena: '${state.name}'")
-        if (state.name.isBlank() || state.amount.isBlank()) return
-
-        val subscriptionToSave = Subscription(
-            id = editingSubscriptionId,
-            name = state.name,
-            amount = state.amount.toDouble(),
-            currency = state.currency,
-            billingCycle = state.billingCycle,
-            firstPaymentDate = state.firstPaymentDate
-        )
+    fun saveSubscription() {
         viewModelScope.launch {
+            val state = _formState.value
+            if (state.name.isBlank() || state.amount.isBlank()) return@launch
+
+            val subscriptionToSave = Subscription(
+                id = editingSubscriptionId,
+                name = state.name,
+                amount = state.amount.toDouble(),
+                currency = state.currency,
+                billingCycle = state.billingCycle,
+                firstPaymentDate = state.firstPaymentDate
+            )
             subscriptionDao.insert(subscriptionToSave)
-            onSuccess()
+
+            _navigationChannel.send(Unit)
         }
     }
 
-    fun deleteSubscription(onSuccess: () -> Unit) {
+    fun deleteSubscription() {
         viewModelScope.launch {
-            // ZUZENDUTA: 'amount' eremuak zenbaki bat behar du, ez testu huts bat.
             val sub = Subscription(id = editingSubscriptionId, name = "", amount = 0.0, currency = "", billingCycle = BillingCycle.MONTHLY, firstPaymentDate = Date())
             subscriptionDao.delete(sub)
-            onSuccess()
+
+            _navigationChannel.send(Unit)
         }
     }
-
     fun onNameChange(newName: String) {
         _formState.update { it.copy(name = newName) }
     }
