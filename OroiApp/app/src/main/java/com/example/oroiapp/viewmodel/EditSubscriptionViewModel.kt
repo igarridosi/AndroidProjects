@@ -1,5 +1,6 @@
 package com.example.oroiapp.viewmodel
 
+import android.app.Application
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,9 +14,11 @@ import android.util.Log
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import com.example.oroiapp.worker.NotificationScheduler
 
 class EditSubscriptionViewModel(
     private val subscriptionDao: SubscriptionDao,
+    private val context: Application,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -58,6 +61,7 @@ class EditSubscriptionViewModel(
         )
 
         subscriptionDao.update(updatedSubscription)
+        NotificationScheduler.scheduleReminder(context, updatedSubscription)
     }
 
     suspend fun deleteSubscription() {
@@ -71,6 +75,7 @@ class EditSubscriptionViewModel(
         )
 
         subscriptionDao.delete(subscriptionToDelete)
+        NotificationScheduler.cancelReminder(context, editingSubscriptionId)
     }
 
     fun onNameChange(newName: String) { _formState.update { it.copy(name = newName) } }

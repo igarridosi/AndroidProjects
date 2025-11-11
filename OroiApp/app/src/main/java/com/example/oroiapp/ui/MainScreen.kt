@@ -257,8 +257,6 @@ private fun calculateNextPaymentDate(subscription: Subscription): Date {
     return calendar.time
 }
 
-// ... (Aurrebistak berdin jarraitzen dute, ez da beharrezkoa aldatzea)
-
 @Preview(showBackground = true)
 @Composable
 fun CostCarouselPreview() {

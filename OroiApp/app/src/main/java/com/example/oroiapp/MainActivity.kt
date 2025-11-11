@@ -1,13 +1,19 @@
 package com.example.oroiapp
 
+import android.Manifest
+import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
@@ -25,8 +31,26 @@ import com.example.oroiapp.viewmodel.MainViewModel
 import com.example.oroiapp.viewmodel.OroiViewModelFactory
 
 class MainActivity : ComponentActivity() {
+    // 1. Baimena eskatzeko 'launcher'-a sortu
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            // Baimena onartu da. Mezu txiki bat erakutsi.
+            Toast.makeText(this, "Notifikazioak aktibatuta.", Toast.LENGTH_SHORT).show()
+        } else {
+            // Baimena ukatu da. Mezu luzeago bat erakutsi.
+            Toast.makeText(
+                this,
+                "Baimena ukatu da. Abisuak ez dira bidaliko.",
+                Toast.LENGTH_LONG
+            ).show()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        askNotificationPermission()
         setContent {
             OroiTheme {
                 Surface(
@@ -35,6 +59,16 @@ class MainActivity : ComponentActivity() {
                 ) {
                     OroiApp(OroiViewModelFactory)
                 }
+            }
+        }
+    }
+
+    private fun askNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) !=
+                android.content.pm.PackageManager.PERMISSION_GRANTED
+            ) {
+                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
             }
         }
     }

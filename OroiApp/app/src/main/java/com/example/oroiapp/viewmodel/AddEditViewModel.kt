@@ -1,11 +1,13 @@
 package com.example.oroiapp.viewmodel
 
+import android.app.Application
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.oroiapp.data.SubscriptionDao
 import com.example.oroiapp.model.BillingCycle
 import com.example.oroiapp.model.Subscription
+import com.example.oroiapp.worker.NotificationScheduler
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -24,6 +26,7 @@ data class SubscriptionFormState(
 )
 
 class AddEditViewModel(
+    private val application: Application,
     private val subscriptionDao: SubscriptionDao
 ) : ViewModel() {
 
@@ -48,6 +51,7 @@ class AddEditViewModel(
             )
             // ZUZENDUTA: 'add' deitzen dugu, ez 'insert'
             subscriptionDao.add(newSubscription)
+            NotificationScheduler.scheduleReminder(application.applicationContext, newSubscription)
             _navigationChannel.send(Unit)
         }
     }
