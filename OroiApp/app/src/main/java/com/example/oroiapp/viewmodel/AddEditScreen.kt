@@ -30,52 +30,48 @@ fun AddEditScreen(
     viewModel: AddEditViewModel,
     onNavigateBack: () -> Unit
 ) {
-    // EZ DAGO EGOERA LOKALIK.
     val formState by viewModel.formState.collectAsState()
-    val focusManager = LocalFocusManager.current
-    val scope = rememberCoroutineScope()
 
-    val shouldNavigateBack by viewModel.navigateBack.collectAsState()
-    LaunchedEffect(shouldNavigateBack) {
-        if (shouldNavigateBack) {
-            onNavigateBack()
-        }
-    }
+    // --- COPILOT-EN AHOLKUAK APLIKATUZ ---
+    val scope = rememberCoroutineScope()
+    val focusManager = LocalFocusManager.current
+    var isSaving by remember { mutableStateOf(false) }
 
     Scaffold(
-        topBar = { /* ... */ }
+        topBar = {
+            TopAppBar(
+                title = { Text("Gehitu Harpidetza") },
+                navigationIcon = {
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Atzera")
+                    }
+                }
+            )
+        }
     ) { paddingValues ->
-        Column(modifier = Modifier.padding(paddingValues).padding(16.dp).fillMaxSize(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-
-            // TextField-ek ZUZENEAN ViewModel-aren egoera irakurri eta aldatzen dute.
-            OutlinedTextField(
-                value = formState.name,
-                onValueChange = viewModel::onNameChange,
-                label = { Text("Izena (Ad: Netflix)") },
-                modifier = Modifier.fillMaxWidth()
-            )
-            OutlinedTextField(
-                value = formState.amount,
-                onValueChange = viewModel::onAmountChange,
-                label = { Text("Kopurua (Ad: 9.99)") },
-                modifier = Modifier.fillMaxWidth()
-            )
-            BillingCycleSelector(
-                selectedCycle = formState.billingCycle,
-                onCycleSelected = viewModel::onBillingCycleChange
-            )
-            DatePickerField(
-                selectedDate = formState.firstPaymentDate,
-                onDateSelected = viewModel::onDateChange
-            )
+        Column(
+            modifier = Modifier.padding(paddingValues).padding(16.dp).fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            OutlinedTextField(value = formState.name, onValueChange = viewModel::onNameChange, label = { Text("Izena (Ad: Netflix)") }, modifier = Modifier.fillMaxWidth())
+            OutlinedTextField(value = formState.amount, onValueChange = viewModel::onAmountChange, label = { Text("Kopurua (Ad: 9.99)") }, modifier = Modifier.fillMaxWidth())
+            BillingCycleSelector(selectedCycle = formState.billingCycle, onCycleSelected = viewModel::onBillingCycleChange)
+            DatePickerField(selectedDate = formState.firstPaymentDate, onDateSelected = viewModel::onDateChange)
 
             Spacer(modifier = Modifier.weight(1f))
 
             Button(
                 onClick = {
-                    focusManager.clearFocus()
-                    viewModel.saveSubscription() // Jada ez du callback-ik hartzen
+                    if (!isSaving) {
+                        scope.launch {
+                            isSaving = true // 1. Desgaitu botoia
+                            focusManager.clearFocus() // 2. Ezkutatu teklatua
+                            viewModel.saveSubscription() // 3. Gorde (eta itxaron)
+                            onNavigateBack() // 4. Nabigatu
+                        }
+                    }
                 },
+                enabled = !isSaving, // Botoiaren egoera lotu
                 modifier = Modifier.fillMaxWidth()
             ) { Text("Gorde Harpidetza") }
         }

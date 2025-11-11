@@ -18,15 +18,10 @@ fun EditSubscriptionScreen(
     viewModel: EditSubscriptionViewModel,
     onNavigateBack: () -> Unit
 ) {
-
     val formState by viewModel.formState.collectAsState()
+    val scope = rememberCoroutineScope()
     val focusManager = LocalFocusManager.current
-
-    LaunchedEffect(Unit) {
-        viewModel.navigationEvent.collect {
-            onNavigateBack()
-        }
-    }
+    var isSaving by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -34,7 +29,7 @@ fun EditSubscriptionScreen(
                 title = { Text("Editatu Harpidetza") },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Filled.ArrowBack, contentDescription = "Atzera")
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Atzera")
                     }
                 }
             )
@@ -47,11 +42,9 @@ fun EditSubscriptionScreen(
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-
-            // 2. TextField-ek ZUZENEAN ViewModel-aren egoera irakurri eta aldatzen dute.
             OutlinedTextField(
                 value = formState.name,
-                onValueChange = viewModel::onNameChange, // Ekintza zuzenean ViewModel-era
+                onValueChange = viewModel::onNameChange,
                 label = { Text("Izena") },
                 modifier = Modifier.fillMaxWidth()
             )
@@ -72,25 +65,49 @@ fun EditSubscriptionScreen(
 
             Spacer(modifier = Modifier.weight(1f))
 
+            // Gordetzeko botoia
             Button(
                 onClick = {
-                    focusManager.clearFocus()
-                    viewModel.saveSubscription() // Jada ez du callback-ik hartzen
+                    if (!isSaving) {
+                        scope.launch {
+                            isSaving = true
+                            focusManager.clearFocus()
+                            viewModel.saveSubscription()
+                            isSaving = false
+                            onNavigateBack()
+                        }
+                    }
                 },
+                enabled = !isSaving,
                 modifier = Modifier.fillMaxWidth()
-            ) { Text("Gorde Aldaketak") }
+            ) {
+                Text("Gorde Aldaketak")
+            }
 
             Spacer(modifier = Modifier.height(8.dp))
 
+            // Ezabatu botoia
             OutlinedButton(
                 onClick = {
-                    focusManager.clearFocus()
-                    viewModel.deleteSubscription() // Jada ez du callback-ik hartzen
+                    if (!isSaving) {
+                        scope.launch {
+                            isSaving = true
+                            focusManager.clearFocus()
+                            viewModel.deleteSubscription()
+                            isSaving = false
+                            onNavigateBack()
+                        }
+                    }
                 },
+                enabled = !isSaving,
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.error),
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.error)
-            ) { Text("Ezabatu Harpidetza") }
+            ) {
+                Text("Ezabatu Harpidetza")
+            }
         }
     }
 }
+
+

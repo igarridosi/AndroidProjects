@@ -29,7 +29,7 @@ object OroiViewModelFactory : ViewModelProvider.Factory {
                 MainViewModel(dao) as T
             }
             modelClass.isAssignableFrom(AddEditViewModel::class.java) -> {
-                AddEditViewModel(dao, savedStateHandle) as T
+                AddEditViewModel(dao) as T
             }
             modelClass.isAssignableFrom(EditSubscriptionViewModel::class.java) -> {
                 EditSubscriptionViewModel(dao, savedStateHandle) as T

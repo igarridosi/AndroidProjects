@@ -58,7 +58,9 @@ fun OroiApp(factory: ViewModelProvider.Factory) {
             val addViewModel: AddEditViewModel = viewModel(factory = factory)
             AddEditScreen(
                 viewModel = addViewModel,
-                onNavigateBack = { navController.popBackStack() }
+                onNavigateBack = { navController.navigate("main_screen") {
+                    popUpTo("main_screen") { inclusive = true }
+                } }
             )
         }
 
@@ -66,7 +68,6 @@ fun OroiApp(factory: ViewModelProvider.Factory) {
             route = "edit_subscription/{subscriptionId}",
             arguments = listOf(navArgument("subscriptionId") { type = NavType.IntType })
         ) { backStackEntry ->
-
 
             // 1. Lortu ID-a nabigazio-argudioetatik.
             val subscriptionId = backStackEntry.arguments?.getInt("subscriptionId")
@@ -80,7 +81,9 @@ fun OroiApp(factory: ViewModelProvider.Factory) {
 
             EditSubscriptionScreen(
                 viewModel = editViewModel,
-                onNavigateBack = { navController.popBackStack() }
+                onNavigateBack = { navController.navigate("main_screen") {
+                    popUpTo("main_screen") { inclusive = true }
+                } }
             )
         }
     }
