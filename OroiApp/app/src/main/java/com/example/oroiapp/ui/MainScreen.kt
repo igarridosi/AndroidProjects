@@ -1,5 +1,8 @@
 package com.example.oroiapp.ui
 
+import android.R
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -20,18 +23,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.oroiapp.model.BillingCycle
 import com.example.oroiapp.model.Subscription
 import com.example.oroiapp.ui.theme.OroiTheme
+import com.example.oroiapp.ui.theme.Pink40
+import com.example.oroiapp.ui.theme.Purple80
 import com.example.oroiapp.viewmodel.MainUiState
 import com.example.oroiapp.viewmodel.MainViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 
+@RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
@@ -42,15 +50,18 @@ fun MainScreen(
     val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
+        // containerColor = colorResource(R.color.white),
+        /*
         topBar = {
-            TopAppBar(
-                title = { Text("Oroi - Nire Harpidetzak") },
+            CenterAlignedTopAppBar(
+                title = { Text("Oroi - Nire Harpidetzak", fontWeight = FontWeight.Bold) },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.primary
-                )
+                    containerColor = colorResource(R.color.holo_purple),
+                    titleContentColor = colorResource(R.color.white)
+
+                ),
             )
-        },
+        },*/
         floatingActionButton = {
             FloatingActionButton(onClick = onAddSubscription) {
                 Icon(Icons.Filled.Add, contentDescription = "Harpidetza Gehitu")
@@ -61,13 +72,36 @@ fun MainScreen(
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize()
-                .padding(16.dp)
+                .padding(horizontal = 16.dp)
         ) {
-            CostCarousel(uiState = uiState)
+            CenterAlignedTopAppBar(
+                title = {
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "Nire Harpidetzak",
+                            fontWeight = FontWeight.Bold,
+                        )
+                    }
+                },
+                navigationIcon = { },
+                actions = { },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = colorResource(R.color.holo_purple),
+                    titleContentColor = colorResource(R.color.white)
+                ),
+                // PASO 3: Aplicamos los modificadores para el efecto "flotante".
+                modifier = Modifier
+                    .padding(top = 4.dp) // Margen superior
+                    .clip(RoundedCornerShape(12.dp)) // Bordes redondeados
+            )
             Spacer(modifier = Modifier.height(16.dp))
+            CostCarousel(uiState = uiState)
             SubscriptionList(
                 subscriptions = uiState.subscriptions,
-                onEdit = onEditSubscription // ZUZENDUTA: Funtzioa pasatzen du
+                onEdit = onEditSubscription
             )
         }
     }
@@ -156,7 +190,7 @@ fun SubscriptionList(
                 backgroundContent = {
                     val color = when (dismissState.targetValue) {
                         SwipeToDismissBoxValue.EndToStart -> Color(0xFF4CAF50) // Berdea
-                        else -> Color.Transparent
+                        else -> Color.Gray
                     }
                     Box(
                         modifier = Modifier
@@ -304,13 +338,22 @@ fun MainScreenPreview() {
 
     OroiTheme {
         Scaffold(
-            topBar = { TopAppBar(title = { Text("Oroi - Nire Harpidetzak") }) },
+            topBar = {
+                CenterAlignedTopAppBar(
+                    title = { Text("Oroi - Nire Harpidetzak") },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        titleContentColor = MaterialTheme.colorScheme.primary
+                    )
+                )
+            },
             floatingActionButton = { FloatingActionButton(onClick = {}) { Icon(Icons.Filled.Add, "") } }
         ) { paddingValues ->
             Column(
                 modifier = Modifier
                     .padding(paddingValues)
                     .padding(16.dp)
+
             ) {
                 CostCarousel(uiState = sampleUiState)
                 Spacer(modifier = Modifier.height(16.dp))

@@ -46,7 +46,6 @@ class EditSubscriptionViewModel(
         }
     }
 
-    // 🔹 Función suspend, no lanza coroutine interna
     suspend fun saveSubscription() {
         val state = _formState.value
         if (state.name.isBlank() || state.amount.isBlank()) return

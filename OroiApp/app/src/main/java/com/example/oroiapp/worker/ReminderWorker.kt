@@ -1,12 +1,15 @@
 package com.example.oroiapp.worker
 
 import android.Manifest
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import androidx.annotation.RequiresPermission
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.example.oroiapp.MainActivity
 import com.example.oroiapp.OroiApplication
 import com.example.oroiapp.R
 import com.example.oroiapp.model.BillingCycle
@@ -48,6 +51,17 @@ class ReminderWorker(
 
     @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
     private fun showNotification(title: String, content: String) {
+        val intent = Intent(context, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+
+        val pendingIntent = PendingIntent.getActivity(
+            context,
+            0,
+            intent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+
         // Zure aplikazioaren ikonoa erabili
         val notification = NotificationCompat.Builder(context, OroiApplication.CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_launcher_foreground) // Ziurtatu ikono hau existitzen dela
@@ -55,6 +69,7 @@ class ReminderWorker(
             .setContentText(content)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setAutoCancel(true) // Erabiltzaileak klik egitean ezabatzen da
+            .setContentIntent(pendingIntent)
             .build()
 
         // Erakutsi notifikazioa (baimenak behar dira API 33+)

@@ -29,28 +29,22 @@ class MainViewModel(private val subscriptionDao: SubscriptionDao) : ViewModel() 
 
     // StateFlow bat interfazearen egoera erakusteko
     val uiState: StateFlow<MainUiState> = subscriptionDao.getAllSubscriptions()
-        .map { subs ->
-            val allCosts = calculateAllCosts(subs)
-            MainUiState(
-                subscriptions = subs,
-                totalMonthlyCost = allCosts.monthly,
-                totalAnnualCost = allCosts.annual,
-                totalDailyCost = allCosts.daily
-            )
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000L),
-            initialValue = MainUiState() // Hasierako egoera hutsa
+
+    .map { subs ->
+        val allCosts = calculateAllCosts(subs)
+        MainUiState(
+            subscriptions = subs,
+            totalMonthlyCost = allCosts.monthly,
+            totalAnnualCost = allCosts.annual,
+            totalDailyCost = allCosts.daily
         )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000L),
+        initialValue = MainUiState() // Hasierako egoera hutsa
+    )
 
-    // Harpidetza bat ezabatzeko funtzioa
-    fun deleteSubscription(subscription: Subscription) {
-        viewModelScope.launch {
-            subscriptionDao.delete(subscription)
-        }
-    }
-
-    // 3. Funtzio nagusi bat kostu guztiak kalkulatzeko
+    // Funtzio nagusi bat kostu guztiak kalkulatzeko
     private fun calculateAllCosts(subscriptions: List<Subscription>): AllCosts {
         val monthlyCost = subscriptions.sumOf { sub ->
             when (sub.billingCycle) {
