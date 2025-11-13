@@ -163,6 +163,6 @@ fun DatePickerField(
         trailingIcon = {
             Icon(Icons.Default.DateRange, "Hautatu data", Modifier.clickable { datePickerDialog.show() })
         },
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
     )
 }

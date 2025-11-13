@@ -10,6 +10,7 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
@@ -17,33 +18,33 @@ import androidx.core.view.WindowCompat
 
 // Kolore paleta ilunerako
 private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
-)
-
-// Kolore paleta argirako
-private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
-
-    /* Beste kolore lehenetsi batzuk hemen gainidatzi ditzakezu
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
+    primary = OroiBrightPurple,
+    background = Color(0xFF1C1B1F), // Un fondo oscuro estándar
+    surface = OroiDeepPurple,
+    surfaceVariant = OroiLavender,
     onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+    onBackground = OroiBrightPurple,
+    onSurface = OroiTextOnDeepPurple,
+    onSurfaceVariant = OroiTextOnLavender
 )
+
+private val LightColorScheme = lightColorScheme(
+    primary = OroiBrightPurple,
+    background = OroiBackground,
+    surface = OroiDeepPurple,
+    surfaceVariant = OroiLavender,
+    onPrimary = Color.White,
+    onBackground = OroiBrightPurple,
+    onSurface = OroiTextOnDeepPurple,
+    onSurfaceVariant = OroiTextOnLavender
+)
+
 
 @Composable
 fun OroiTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // 'Dynamic Color' Android 12+ bertsioetan bakarrik dago eskuragarri
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
@@ -58,8 +59,8 @@ fun OroiTheme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.primary.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
+            window.statusBarColor = OroiBackground.toArgb()
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
         }
     }
 

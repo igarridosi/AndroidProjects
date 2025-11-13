@@ -7,4 +7,9 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="oroi_deep_purple">#FF2C2042</color>
+    <color name="oroi_bright_purple">#FF7A40F2</color>
+    <color name="oroi_background">#FFF0F2F5</color>
+    <color name="oroi_text_on_deep_purple">#FFFFFFFF</color>
 </resources>

@@ -39,6 +39,37 @@ import com.example.oroiapp.viewmodel.MainViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 
+@Composable
+fun MainHeader(username: String) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = "oroi",
+            fontSize = 32.sp,
+            letterSpacing = 2.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colorScheme.onBackground
+        )
+        Column(horizontalAlignment = Alignment.End) {
+            Text(
+                text = "Ongi Etorri,",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+            Text(
+                text = username,
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+        }
+    }
+}
+
 @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -50,21 +81,18 @@ fun MainScreen(
     val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
-        // containerColor = colorResource(R.color.white),
-        /*
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text("Oroi - Nire Harpidetzak", fontWeight = FontWeight.Bold) },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = colorResource(R.color.holo_purple),
-                    titleContentColor = colorResource(R.color.white)
-
-                ),
-            )
-        },*/
+        containerColor = MaterialTheme.colorScheme.background,
         floatingActionButton = {
-            FloatingActionButton(onClick = onAddSubscription) {
-                Icon(Icons.Filled.Add, contentDescription = "Harpidetza Gehitu")
+            FloatingActionButton(
+                onClick = onAddSubscription,
+                shape = RoundedCornerShape(16.dp), // Forma más redondeada
+                containerColor = MaterialTheme.colorScheme.primary
+            ) {
+                Icon(
+                    Icons.Filled.Add,
+                    contentDescription = "Harpidetza Gehitu",
+                    tint = MaterialTheme.colorScheme.onPrimary
+                )
             }
         }
     ) { paddingValues ->
@@ -72,33 +100,13 @@ fun MainScreen(
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize()
-                .padding(horizontal = 16.dp)
+                .padding(16.dp)
         ) {
-            CenterAlignedTopAppBar(
-                title = {
-                    Box(
-                        modifier = Modifier.fillMaxWidth(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "Nire Harpidetzak",
-                            fontWeight = FontWeight.Bold,
-                        )
-                    }
-                },
-                navigationIcon = { },
-                actions = { },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = colorResource(R.color.holo_purple),
-                    titleContentColor = colorResource(R.color.white)
-                ),
-                // PASO 3: Aplicamos los modificadores para el efecto "flotante".
-                modifier = Modifier
-                    .padding(top = 4.dp) // Margen superior
-                    .clip(RoundedCornerShape(12.dp)) // Bordes redondeados
-            )
-            Spacer(modifier = Modifier.height(16.dp))
+            // Usamos el nuevo header
+            MainHeader(username = "{username}") // TODO: Reemplazar con el nombre real
+            Spacer(modifier = Modifier.height(24.dp))
             CostCarousel(uiState = uiState)
+            Spacer(modifier = Modifier.height(24.dp))
             SubscriptionList(
                 subscriptions = uiState.subscriptions,
                 onEdit = onEditSubscription
@@ -115,7 +123,8 @@ fun CostCarousel(uiState: MainUiState) {
         HorizontalPager(
             state = pagerState,
             contentPadding = PaddingValues(horizontal = 32.dp),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            pageSpacing = 16.dp,
         ) { page ->
             when (page) {
                 0 -> CostCard(title = "Hileko Gastua", amount = uiState.totalMonthlyCost)
@@ -146,9 +155,9 @@ fun CostCarousel(uiState: MainUiState) {
 fun CostCard(title: String, amount: Double) {
     Card(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 8.dp),
-        elevation = CardDefaults.cardElevation(4.dp)
+            .fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        shape = RoundedCornerShape(24.dp)
     ) {
         Column(
             modifier = Modifier
@@ -156,8 +165,18 @@ fun CostCard(title: String, amount: Double) {
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = title, style = MaterialTheme.typography.titleMedium)
-            Text(text = "€${"%.2f".format(amount)}", style = MaterialTheme.typography.headlineLarge, fontWeight = FontWeight.Bold)
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface
+
+            )
+            Text(
+                text = "€${"%.2f".format(amount)}",
+                style = MaterialTheme.typography.headlineLarge,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface
+            )
         }
     }
 }
@@ -223,7 +242,8 @@ fun SubscriptionItem(subscription: Subscription) {
     Card(
         modifier = Modifier
             .fillMaxWidth(),
-        shape = RoundedCornerShape(12.dp) // ZUZENDUTA: Forma biribildua
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+        shape = RoundedCornerShape(12.dp)
     ) {
         Box { // Box hau badge-a kokatzeko da
             Row(
@@ -234,10 +254,15 @@ fun SubscriptionItem(subscription: Subscription) {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Column {
-                    Text(subscription.name, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                    Text(subscription.name,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                     Text(
                         "Hurrengo ordainketa: ${dateFormat.format(nextPaymentDate)}",
-                        style = MaterialTheme.typography.bodySmall
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
                 Text(text = "${subscription.amount} ${subscription.currency}", fontWeight = FontWeight.SemiBold, fontSize = 16.sp)
@@ -255,9 +280,9 @@ fun SubscriptionItem(subscription: Subscription) {
 @Composable
 fun BillingCycleBadge(cycle: BillingCycle, modifier: Modifier = Modifier) {
     val (text, color) = when (cycle) {
-        BillingCycle.WEEKLY -> "A" to Color(0xFFE57373)
-        BillingCycle.MONTHLY -> "H" to Color(0xFFFFB74D)
-        BillingCycle.ANNUAL -> "U" to Color(0xFF64B5F6)
+        BillingCycle.WEEKLY -> "A" to Color(0xFF2C2042)
+        BillingCycle.MONTHLY -> "H" to Color(0xFF7A40F2)
+        BillingCycle.ANNUAL -> "U" to Color(0xFFC960F1)
     }
     Box(
         contentAlignment = Alignment.Center,

@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -29,6 +30,7 @@ import com.example.oroiapp.viewmodel.AddEditViewModel
 import com.example.oroiapp.viewmodel.EditSubscriptionViewModel
 import com.example.oroiapp.viewmodel.MainViewModel
 import com.example.oroiapp.viewmodel.OroiViewModelFactory
+import com.example.oroiapp.ui.theme.OroiTheme
 
 class MainActivity : ComponentActivity() {
     // 1. Baimena eskatzeko 'launcher'-a sortu
@@ -48,6 +50,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         askNotificationPermission()
@@ -74,6 +77,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 @Composable
 fun OroiApp(factory: ViewModelProvider.Factory) {
     val mainViewModel: MainViewModel = viewModel(factory = factory)
