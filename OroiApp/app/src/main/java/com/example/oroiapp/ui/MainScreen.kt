@@ -247,7 +247,7 @@ fun SubscriptionItem(subscription: Subscription) {
     val nextPaymentDate = calculateNextPaymentDate(subscription)
     val dateFormat = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault())
 
-    // ZUZENDUTA: Box-a kendu eta Card-a da elementu nagusia
+    // Box-a kendu eta Card-a da elementu nagusia
     Card(
         modifier = Modifier
             .fillMaxWidth(),
@@ -391,7 +391,6 @@ fun MainScreenPreview() {
             ) {
                 CostCarousel(uiState = sampleUiState)
                 Spacer(modifier = Modifier.height(16.dp))
-                // ALDAKETA HEMEN DAGO:
                 SubscriptionList(
                     subscriptions = sampleUiState.subscriptions,
                     onEdit = {}

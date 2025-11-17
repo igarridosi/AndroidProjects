@@ -22,7 +22,7 @@ object NotificationScheduler {
         val now = Calendar.getInstance()
         val nextPayment = Calendar.getInstance().apply { time = subscription.firstPaymentDate }
 
-        // Hurrengo ordainketa benetan noiz den kalkulatu (logika hau lehendik zenuen)
+        // Hurrengo ordainketa benetan noiz den kalkulatu
         while (nextPayment.before(now)) {
             when (subscription.billingCycle) {
                 BillingCycle.WEEKLY -> nextPayment.add(Calendar.WEEK_OF_YEAR, 1)
