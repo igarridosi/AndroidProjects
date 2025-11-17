@@ -17,14 +17,11 @@ interface SubscriptionDao {
     @Query("SELECT * FROM subscriptions WHERE id = :id")
     suspend fun getSubscriptionById(id: Int): Subscription?
 
-    // ZUZENDUTA: Funtzio hau harpidetza BERRIAK gehitzeko bakarrik da
+    // CRUD Funtzioak
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun add(subscription: Subscription)
-
-    // ZUZENDUTA: Funtzio BERRIA, harpidetzak EGUNERATZEKO bakarrik
     @Update
     suspend fun update(subscription: Subscription)
-
     @Delete
     suspend fun delete(subscription: Subscription)
 }

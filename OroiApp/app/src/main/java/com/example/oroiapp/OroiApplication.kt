@@ -28,6 +28,7 @@ class OroiApplication : Application() {
 
         // Factory-ari DAO-aren instantzia eman aplikazioa hasten denean
         OroiViewModelFactory.dao = database.subscriptionDao()
+
         OroiViewModelFactory.userPrefs = userPreferencesRepository
 
         createNotificationChannel()
