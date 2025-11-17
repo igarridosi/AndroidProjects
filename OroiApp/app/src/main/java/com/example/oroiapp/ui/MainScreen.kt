@@ -55,7 +55,7 @@ fun MainHeader(username: String) {
         )
         Column(horizontalAlignment = Alignment.End) {
             Text(
-                text = "Ongi Etorri,",
+                text = "Ongi Etorri, ",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onBackground
             )
@@ -76,22 +76,31 @@ fun MainHeader(username: String) {
 fun MainScreen(
     viewModel: MainViewModel,
     onAddSubscription: () -> Unit,
-    onEditSubscription: (Int) -> Unit // ZUZENDUTA: Parametro berria onartzen du
+    onEditSubscription: (Int) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val dialogInput by viewModel.dialogUsernameInput.collectAsState()
+
+    if (uiState.showUsernameDialog) {
+        UsernamePromptDialog(
+            currentInput = dialogInput,
+            onInputChange = viewModel::onDialogUsernameChange,
+            onSave = viewModel::onUsernameSave
+        )
+    }
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         floatingActionButton = {
             FloatingActionButton(
                 onClick = onAddSubscription,
-                shape = RoundedCornerShape(16.dp), // Forma más redondeada
+                shape = RoundedCornerShape(16.dp),
                 containerColor = MaterialTheme.colorScheme.primary
             ) {
                 Icon(
                     Icons.Filled.Add,
                     contentDescription = "Harpidetza Gehitu",
-                    tint = MaterialTheme.colorScheme.onPrimary
+                    tint = MaterialTheme.colorScheme.onSurface
                 )
             }
         }
@@ -103,7 +112,7 @@ fun MainScreen(
                 .padding(16.dp)
         ) {
             // Usamos el nuevo header
-            MainHeader(username = "{username}") // TODO: Reemplazar con el nombre real
+            MainHeader(username = uiState.username)
             Spacer(modifier = Modifier.height(24.dp))
             CostCarousel(uiState = uiState)
             Spacer(modifier = Modifier.height(24.dp))
@@ -138,7 +147,7 @@ fun CostCarousel(uiState: MainUiState) {
             horizontalArrangement = Arrangement.Center
         ) {
             repeat(pagerState.pageCount) { index ->
-                val color = if (pagerState.currentPage == index) MaterialTheme.colorScheme.primary else Color.LightGray
+                val color = if (pagerState.currentPage == index) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface
                 Box(
                     modifier = Modifier
                         .padding(2.dp)
@@ -188,7 +197,7 @@ fun SubscriptionList(
     onEdit: (Int) -> Unit
 ) {
     LazyColumn(
-        // ZUZENDUTA: Padding-a elementu bakoitzari emango diogu, ez zerrendari
+        // Padding-a elementu bakoitzari emango diogu, ez zerrendari
         verticalArrangement = Arrangement.spacedBy(0.dp),
         contentPadding = PaddingValues(vertical = 8.dp)
     ) {
@@ -204,17 +213,17 @@ fun SubscriptionList(
             )
             SwipeToDismissBox(
                 state = dismissState,
-                modifier = Modifier.padding(vertical = 4.dp), // ZUZENDUTA: Tartea hemen
+                modifier = Modifier.padding(vertical = 4.dp),
                 enableDismissFromStartToEnd = false,
                 backgroundContent = {
                     val color = when (dismissState.targetValue) {
-                        SwipeToDismissBoxValue.EndToStart -> Color(0xFF4CAF50) // Berdea
-                        else -> Color.Gray
+                        SwipeToDismissBoxValue.EndToStart -> MaterialTheme.colorScheme.primary
+                        else -> MaterialTheme.colorScheme.surface
                     }
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
-                            .background(color, shape = RoundedCornerShape(12.dp)) // ZUZENDUTA: Forma biribildua
+                            .background(color, shape = RoundedCornerShape(12.dp))
                             .padding(horizontal = 20.dp),
                         contentAlignment = Alignment.CenterEnd
                     ) {
@@ -367,7 +376,7 @@ fun MainScreenPreview() {
                 CenterAlignedTopAppBar(
                     title = { Text("Oroi - Nire Harpidetzak") },
                     colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        containerColor = MaterialTheme.colorScheme.surface,
                         titleContentColor = MaterialTheme.colorScheme.primary
                     )
                 )

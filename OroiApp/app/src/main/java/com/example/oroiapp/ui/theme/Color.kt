@@ -7,7 +7,7 @@ val OroiDeepPurple = Color(0xFF2C2042)
 val OroiLavender = Color(0xFFD0C8FF)
 val OroiBrightPurple = Color(0xFF7A40F2)
 val OroiTextOnDeepPurple = Color.White
-val OroiTextOnLavender = Color(0xFF1C1B1F)
+val OroiTextOnLavender = Color.Black
 
 val Purple80 = Color(0xFFD0BCFF)
 val PurpleGrey80 = Color(0xFFCCC2DC)

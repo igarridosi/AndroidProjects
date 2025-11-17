@@ -8,6 +8,7 @@ import androidx.room.Room
 import com.example.oroiapp.data.AppDatabase
 import com.example.oroiapp.data.SubscriptionDao
 import com.example.oroiapp.viewmodel.OroiViewModelFactory
+import com.example.oroiapp.data.UserPreferencesRepository
 
 class OroiApplication : Application() {
     companion object {
@@ -23,8 +24,11 @@ class OroiApplication : Application() {
             "oroi_database"
         ).build()
 
+        val userPreferencesRepository = UserPreferencesRepository(applicationContext)
+
         // Factory-ari DAO-aren instantzia eman aplikazioa hasten denean
         OroiViewModelFactory.dao = database.subscriptionDao()
+        OroiViewModelFactory.userPrefs = userPreferencesRepository
 
         createNotificationChannel()
     }

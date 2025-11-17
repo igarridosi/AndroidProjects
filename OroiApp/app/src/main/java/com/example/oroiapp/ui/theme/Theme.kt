@@ -19,10 +19,10 @@ import androidx.core.view.WindowCompat
 // Kolore paleta ilunerako
 private val DarkColorScheme = darkColorScheme(
     primary = OroiBrightPurple,
-    background = Color(0xFF1C1B1F), // Un fondo oscuro estándar
+    background = Color(0xFF1C1B1F),
     surface = OroiDeepPurple,
     surfaceVariant = OroiLavender,
-    onPrimary = Color.White,
+    onPrimary = Color.Black,
     onBackground = OroiBrightPurple,
     onSurface = OroiTextOnDeepPurple,
     onSurfaceVariant = OroiTextOnLavender
@@ -33,7 +33,7 @@ private val LightColorScheme = lightColorScheme(
     background = OroiBackground,
     surface = OroiDeepPurple,
     surfaceVariant = OroiLavender,
-    onPrimary = Color.White,
+    onPrimary = Color.Black,
     onBackground = OroiBrightPurple,
     onSurface = OroiTextOnDeepPurple,
     onSurfaceVariant = OroiTextOnLavender

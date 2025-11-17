@@ -7,7 +7,9 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import com.example.oroiapp.viewmodel.EditSubscriptionViewModel
 import kotlinx.coroutines.launch
@@ -22,6 +24,22 @@ fun EditSubscriptionScreen(
     val scope = rememberCoroutineScope()
     val focusManager = LocalFocusManager.current
     var isSaving by remember { mutableStateOf(false) }
+
+    val customTextFieldColors = OutlinedTextFieldDefaults.colors(
+        unfocusedTextColor = Color.Black,
+        focusedTextColor = Color.Black,
+
+        unfocusedTrailingIconColor = Color.Black,
+        focusedTrailingIconColor = Color.Black,
+
+        unfocusedLabelColor = Color.Black,
+        focusedLabelColor = MaterialTheme.colorScheme.primary,
+
+        unfocusedBorderColor = MaterialTheme.colorScheme.primary,
+
+        unfocusedContainerColor = Color(0xFFFFFFFF).copy(alpha = 0.5f),
+        focusedContainerColor = Color(0xFFFFFFFF).copy(alpha = 0.5f)
+    )
 
     Scaffold(
         topBar = {
@@ -40,27 +58,31 @@ fun EditSubscriptionScreen(
                 .padding(paddingValues)
                 .padding(16.dp)
                 .fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             OutlinedTextField(
                 value = formState.name,
                 onValueChange = viewModel::onNameChange,
                 label = { Text("Izena") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = customTextFieldColors
             )
             OutlinedTextField(
                 value = formState.amount,
                 onValueChange = viewModel::onAmountChange,
                 label = { Text("Kopurua") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = customTextFieldColors
             )
             BillingCycleSelector(
                 selectedCycle = formState.billingCycle,
-                onCycleSelected = viewModel::onBillingCycleChange
+                onCycleSelected = viewModel::onBillingCycleChange,
+                colors = customTextFieldColors
             )
             DatePickerField(
                 selectedDate = formState.firstPaymentDate,
-                onDateSelected = viewModel::onDateChange
+                onDateSelected = viewModel::onDateChange,
+                colors = customTextFieldColors
             )
 
             Spacer(modifier = Modifier.weight(1f))

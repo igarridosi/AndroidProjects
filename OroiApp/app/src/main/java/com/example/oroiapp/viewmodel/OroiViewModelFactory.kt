@@ -6,10 +6,12 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.example.oroiapp.data.SubscriptionDao
+import com.example.oroiapp.data.UserPreferencesRepository
 
 object OroiViewModelFactory : ViewModelProvider.Factory {
 
     lateinit var dao: SubscriptionDao
+    lateinit var userPrefs: UserPreferencesRepository
 
     override fun <T : ViewModel> create(
         modelClass: Class<T>,
@@ -20,7 +22,7 @@ object OroiViewModelFactory : ViewModelProvider.Factory {
 
         return when {
             modelClass.isAssignableFrom(MainViewModel::class.java) -> {
-                MainViewModel(dao) as T
+                MainViewModel(dao, userPrefs) as T
             }
             // ORDENA: Lehenengo 'application', gero 'dao'
             modelClass.isAssignableFrom(AddEditViewModel::class.java) -> {
