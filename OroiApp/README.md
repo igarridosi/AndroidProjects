@@ -41,7 +41,6 @@ Proiektu hau Android garapeneko praktika onenak eta tresna modernoenak jarraituz
 ├── ui/ # Erabiltzailearen interfazea: pantailak (@Composable) eta gaiak.
 ├── viewmodel/ # ViewModel klaseak, UI-aren logika eta egoera kudeatzen dutenak.
 └── worker/ # WorkManager-ekin erlazionatutako atzeko planoko lanak.
-code Code
 ```
 
     
