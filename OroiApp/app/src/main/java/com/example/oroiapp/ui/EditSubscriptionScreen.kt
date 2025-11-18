@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.oroiapp.viewmodel.EditSubscriptionViewModel
 import kotlinx.coroutines.launch
@@ -83,11 +84,11 @@ fun EditSubscriptionScreen(
                 enabled = !isSaving,
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Text("Gorde Aldaketak")
+                Text("Gorde Aldaketak", color = MaterialTheme.colorScheme.surface, fontWeight = FontWeight.SemiBold)
             }
 
             // Ezabatu botoia
-            OutlinedButton(
+            OutlinedButton (
                 onClick = {
                     if (!isSaving) {
                         scope.launch {
@@ -101,10 +102,9 @@ fun EditSubscriptionScreen(
                 },
                 enabled = !isSaving,
                 modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.error),
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.error)
+                border = BorderStroke(2.dp, MaterialTheme.colorScheme.error)
             ) {
-                Text("Ezabatu Harpidetza")
+                Text("Ezabatu Harpidetza", color = MaterialTheme.colorScheme.error, fontWeight = FontWeight.SemiBold)
             }
         }
     }

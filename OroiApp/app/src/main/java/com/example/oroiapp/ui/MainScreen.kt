@@ -29,9 +29,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.compose.OroiTheme
 import com.example.oroiapp.model.BillingCycle
 import com.example.oroiapp.model.Subscription
+import com.example.oroiapp.ui.theme.OroiTheme
 import com.example.oroiapp.viewmodel.MainUiState
 import com.example.oroiapp.viewmodel.MainViewModel
 import java.text.SimpleDateFormat
@@ -49,20 +49,20 @@ fun MainHeader(username: String) {
             fontSize = 32.sp,
             letterSpacing = 2.sp,
             fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.onSecondary
+            color = MaterialTheme.colorScheme.primary
         )
         Column(horizontalAlignment = Alignment.End) {
             Text(
                 text = "Ongi Etorri, ",
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onBackground
+                color = MaterialTheme.colorScheme.primary
             )
             Text(
                 text = username,
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Bold,
                 fontSize = 20.sp,
-                color = MaterialTheme.colorScheme.onBackground
+                color = MaterialTheme.colorScheme.primary
             )
         }
     }
@@ -98,7 +98,7 @@ fun MainScreen(
                 Icon(
                     Icons.Filled.Add,
                     contentDescription = "Harpidetza Gehitu",
-                    tint = MaterialTheme.colorScheme.onSurface
+                    tint = MaterialTheme.colorScheme.surface
                 )
             }
         }
@@ -163,7 +163,7 @@ fun CostCard(title: String, amount: Double) {
     Card(
         modifier = Modifier
             .fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.onPrimary),
         shape = RoundedCornerShape(24.dp)
     ) {
         Column(
@@ -175,14 +175,14 @@ fun CostCard(title: String, amount: Double) {
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.surface
 
             )
             Text(
                 text = "€${"%.2f".format(amount)}",
                 style = MaterialTheme.typography.headlineLarge,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.surface
             )
         }
     }
@@ -216,7 +216,7 @@ fun SubscriptionList(
                 backgroundContent = {
                     val color = when (dismissState.targetValue) {
                         SwipeToDismissBoxValue.EndToStart -> MaterialTheme.colorScheme.primary
-                        else -> MaterialTheme.colorScheme.surface
+                        else -> MaterialTheme.colorScheme.onPrimary
                     }
                     Box(
                         modifier = Modifier
@@ -249,7 +249,7 @@ fun SubscriptionItem(subscription: Subscription) {
     Card(
         modifier = Modifier
             .fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
         shape = RoundedCornerShape(12.dp)
     ) {
         Box { // Box hau badge-a kokatzeko da
@@ -264,15 +264,15 @@ fun SubscriptionItem(subscription: Subscription) {
                     Text(subscription.name,
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                     Text(
                         "Hurrengo ordainketa: ${dateFormat.format(nextPaymentDate)}",
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                 }
-                Text(text = "${subscription.amount} ${subscription.currency}", fontWeight = FontWeight.SemiBold, fontSize = 16.sp)
+                Text(text = "${subscription.amount} ${subscription.currency}", fontWeight = FontWeight.SemiBold, fontSize = 16.sp, color = MaterialTheme.colorScheme.onBackground)
             }
             BillingCycleBadge(
                 cycle = subscription.billingCycle,
@@ -286,10 +286,10 @@ fun SubscriptionItem(subscription: Subscription) {
 
 @Composable
 fun BillingCycleBadge(cycle: BillingCycle, modifier: Modifier = Modifier) {
-    val (text, color, textColor) = when (cycle) {
-        BillingCycle.WEEKLY -> Triple("A", MaterialTheme.colorScheme.tertiaryContainer, MaterialTheme.colorScheme.onTertiaryContainer)
-        BillingCycle.MONTHLY -> Triple("H", MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.onPrimary)
-        BillingCycle.ANNUAL -> Triple("U", MaterialTheme.colorScheme.secondary, MaterialTheme.colorScheme.onSecondary)
+    val (text, color) = when (cycle) {
+        BillingCycle.WEEKLY -> Triple("A", MaterialTheme.colorScheme.onTertiary, MaterialTheme.colorScheme.onTertiaryContainer)
+        BillingCycle.MONTHLY -> Triple("H", MaterialTheme.colorScheme.onTertiaryContainer, MaterialTheme.colorScheme.onPrimary)
+        BillingCycle.ANNUAL -> Triple("U", MaterialTheme.colorScheme.onSecondary, MaterialTheme.colorScheme.onSecondary)
     }
     Box(
         contentAlignment = Alignment.Center,
@@ -298,7 +298,7 @@ fun BillingCycleBadge(cycle: BillingCycle, modifier: Modifier = Modifier) {
             .clip(CircleShape)
             .background(color)
     ) {
-        Text(text = text, color = textColor, fontWeight = FontWeight.Bold, fontSize = 12.sp)
+        Text(text = text, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 12.sp)
     }
 }
 

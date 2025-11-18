@@ -2,6 +2,7 @@ package com.example.oroiapp.ui
 
 import android.app.DatePickerDialog
 import android.widget.DatePicker
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -20,6 +21,7 @@ import java.util.*
 import java.util.Date
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import kotlinx.coroutines.launch
 import com.example.oroiapp.ui.theme.*
 
@@ -82,7 +84,7 @@ fun AddEditScreen(
                 },
                 enabled = !isSaving, // Botoiaren egoera lotu
                 modifier = Modifier.fillMaxWidth()
-            ) { Text("Gorde Harpidetza") }
+            ) { Text("Gorde Harpidetza", color = MaterialTheme.colorScheme.surface, fontWeight = FontWeight.SemiBold) }
         }
     }
 }
@@ -118,7 +120,8 @@ fun BillingCycleSelector(
         )
         ExposedDropdownMenu(
             expanded = expanded,
-            onDismissRequest = { expanded = false }
+            onDismissRequest = { expanded = false },
+            modifier = Modifier.background(MaterialTheme.colorScheme.background)
         ) {
             cycleOptions.forEach { cycle ->
                 DropdownMenuItem(
@@ -129,13 +132,14 @@ fun BillingCycleSelector(
                                 BillingCycle.MONTHLY -> "Hilero"
                                 BillingCycle.ANNUAL -> "Urtero"
                             },
-                            color = Color.Black
+                            color = MaterialTheme.colorScheme.primary,
+                            fontWeight = FontWeight.SemiBold
                         )
                     },
                     onClick = {
                         onCycleSelected(cycle)
                         expanded = false
-                    }
+                    },
                 )
             }
         }

@@ -22,10 +22,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.compose.OroiTheme
 import com.example.oroiapp.ui.AddEditScreen
 import com.example.oroiapp.ui.EditSubscriptionScreen
 import com.example.oroiapp.ui.MainScreen
+import com.example.oroiapp.ui.theme.OroiTheme
 import com.example.oroiapp.viewmodel.AddEditViewModel
 import com.example.oroiapp.viewmodel.EditSubscriptionViewModel
 import com.example.oroiapp.viewmodel.MainViewModel
