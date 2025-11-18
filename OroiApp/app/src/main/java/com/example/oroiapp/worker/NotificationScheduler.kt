@@ -42,8 +42,8 @@ object NotificationScheduler {
 
             // 4. Ataza sortu eta programatu
             val workRequest = OneTimeWorkRequestBuilder<ReminderWorker>()
-                // .setInitialDelay(delay, TimeUnit.MILLISECONDS)
-                .setInitialDelay(5, TimeUnit.SECONDS)
+                .setInitialDelay(delay, TimeUnit.MILLISECONDS)
+                // .setInitialDelay(5, TimeUnit.SECONDS)
                 .setInputData(inputData)
                 .addTag(workTag)
                 .build()

@@ -25,22 +25,6 @@ fun EditSubscriptionScreen(
     val focusManager = LocalFocusManager.current
     var isSaving by remember { mutableStateOf(false) }
 
-    val customTextFieldColors = OutlinedTextFieldDefaults.colors(
-        unfocusedTextColor = Color.Black,
-        focusedTextColor = Color.Black,
-
-        unfocusedTrailingIconColor = Color.Black,
-        focusedTrailingIconColor = Color.Black,
-
-        unfocusedLabelColor = Color.Black,
-        focusedLabelColor = MaterialTheme.colorScheme.primary,
-
-        unfocusedBorderColor = MaterialTheme.colorScheme.primary,
-
-        unfocusedContainerColor = Color(0xFFFFFFFF).copy(alpha = 0.5f),
-        focusedContainerColor = Color(0xFFFFFFFF).copy(alpha = 0.5f)
-    )
-
     Scaffold(
         topBar = {
             TopAppBar(
@@ -64,25 +48,21 @@ fun EditSubscriptionScreen(
                 value = formState.name,
                 onValueChange = viewModel::onNameChange,
                 label = { Text("Izena") },
-                modifier = Modifier.fillMaxWidth(),
-                colors = customTextFieldColors
+                modifier = Modifier.fillMaxWidth()
             )
             OutlinedTextField(
                 value = formState.amount,
                 onValueChange = viewModel::onAmountChange,
                 label = { Text("Kopurua") },
-                modifier = Modifier.fillMaxWidth(),
-                colors = customTextFieldColors
+                modifier = Modifier.fillMaxWidth()
             )
             BillingCycleSelector(
                 selectedCycle = formState.billingCycle,
-                onCycleSelected = viewModel::onBillingCycleChange,
-                colors = customTextFieldColors
+                onCycleSelected = viewModel::onBillingCycleChange
             )
             DatePickerField(
                 selectedDate = formState.firstPaymentDate,
-                onDateSelected = viewModel::onDateChange,
-                colors = customTextFieldColors
+                onDateSelected = viewModel::onDateChange
             )
 
             Spacer(modifier = Modifier.weight(1f))
@@ -101,12 +81,10 @@ fun EditSubscriptionScreen(
                     }
                 },
                 enabled = !isSaving,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 Text("Gorde Aldaketak")
             }
-
-            Spacer(modifier = Modifier.height(8.dp))
 
             // Ezabatu botoia
             OutlinedButton(
@@ -131,5 +109,3 @@ fun EditSubscriptionScreen(
         }
     }
 }
-
-

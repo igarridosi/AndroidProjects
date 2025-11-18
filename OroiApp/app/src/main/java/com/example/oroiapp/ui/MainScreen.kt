@@ -29,11 +29,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.compose.OroiTheme
 import com.example.oroiapp.model.BillingCycle
 import com.example.oroiapp.model.Subscription
-import com.example.oroiapp.ui.theme.OroiTheme
-import com.example.oroiapp.ui.theme.Pink40
-import com.example.oroiapp.ui.theme.Purple80
 import com.example.oroiapp.viewmodel.MainUiState
 import com.example.oroiapp.viewmodel.MainViewModel
 import java.text.SimpleDateFormat
@@ -51,7 +49,7 @@ fun MainHeader(username: String) {
             fontSize = 32.sp,
             letterSpacing = 2.sp,
             fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.onBackground
+            color = MaterialTheme.colorScheme.onSecondary
         )
         Column(horizontalAlignment = Alignment.End) {
             Text(
@@ -235,7 +233,7 @@ fun SubscriptionList(
                     }
                 }
             ) {
-                // ORAIN SubscriptionItem da irristatzen den elementu osoa
+                // Orain SubscriptionItem da irristatzen den elementu osoa
                 SubscriptionItem(subscription = subscription)
             }
         }
@@ -288,10 +286,10 @@ fun SubscriptionItem(subscription: Subscription) {
 
 @Composable
 fun BillingCycleBadge(cycle: BillingCycle, modifier: Modifier = Modifier) {
-    val (text, color) = when (cycle) {
-        BillingCycle.WEEKLY -> "A" to Color(0xFF2C2042)
-        BillingCycle.MONTHLY -> "H" to Color(0xFF7A40F2)
-        BillingCycle.ANNUAL -> "U" to Color(0xFFC960F1)
+    val (text, color, textColor) = when (cycle) {
+        BillingCycle.WEEKLY -> Triple("A", MaterialTheme.colorScheme.tertiaryContainer, MaterialTheme.colorScheme.onTertiaryContainer)
+        BillingCycle.MONTHLY -> Triple("H", MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.onPrimary)
+        BillingCycle.ANNUAL -> Triple("U", MaterialTheme.colorScheme.secondary, MaterialTheme.colorScheme.onSecondary)
     }
     Box(
         contentAlignment = Alignment.Center,
@@ -300,7 +298,7 @@ fun BillingCycleBadge(cycle: BillingCycle, modifier: Modifier = Modifier) {
             .clip(CircleShape)
             .background(color)
     ) {
-        Text(text = text, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 12.sp)
+        Text(text = text, color = textColor, fontWeight = FontWeight.Bold, fontSize = 12.sp)
     }
 }
 

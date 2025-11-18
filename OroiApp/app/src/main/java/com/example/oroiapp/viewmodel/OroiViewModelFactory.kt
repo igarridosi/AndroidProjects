@@ -30,7 +30,6 @@ object OroiViewModelFactory : ViewModelProvider.Factory {
             }
             // ORDENA: Lehenengo 'application', gero 'dao', gero 'savedStateHandle'
             modelClass.isAssignableFrom(EditSubscriptionViewModel::class.java) -> {
-                // Fix: Swapped 'dao' and 'application' to match the constructor's expected order
                 EditSubscriptionViewModel(dao, application, savedStateHandle) as T
             }
             else -> {

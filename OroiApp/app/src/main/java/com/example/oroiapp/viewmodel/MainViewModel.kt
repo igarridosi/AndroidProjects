@@ -43,13 +43,11 @@ class MainViewModel(
     val dialogUsernameInput: StateFlow<String> = _dialogUsernameInput.asStateFlow()
 
     val uiState: StateFlow<MainUiState> = combine(
-        subscriptionDao.getAllSubscriptions(), // Flow 1: Tu fuente de datos principal
-        _username,                             // Flow 2: El nombre de usuario
-        _showUsernameDialog                    // Flow 3: El flag para mostrar el diálogo
+        subscriptionDao.getAllSubscriptions(),
+        _username,
+        _showUsernameDialog
     ) { subs, name, showDialog ->
-        // Tu lógica de cálculo se mantiene intacta
         val allCosts = calculateAllCosts(subs)
-        // Creamos el estado final combinando los datos de los 3 flows
         MainUiState(
             subscriptions = subs,
             totalMonthlyCost = allCosts.monthly,
@@ -61,7 +59,7 @@ class MainViewModel(
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000L),
-        initialValue = MainUiState() // El valor inicial sigue siendo el mismo
+        initialValue = MainUiState()
     )
 
     // Funtzio nagusi bat kostu guztiak kalkulatzeko
@@ -86,9 +84,7 @@ class MainViewModel(
     fun onUsernameSave() {
         val name = _dialogUsernameInput.value.trim()
         if (name.isNotBlank()) {
-            // Guardamos el nombre de forma persistente
             userPrefs.saveUsername(name)
-            // Actualizamos los flows de estado para que la UI reaccione
             _username.value = name
             _showUsernameDialog.value = false
         }

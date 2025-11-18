@@ -58,6 +58,8 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-savedstate:2.8.2")
     implementation("androidx.work:work-runtime-ktx:2.9.0")
 
+    implementation("androidx.compose.ui:ui-text-google-fonts:1.6.7")
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)

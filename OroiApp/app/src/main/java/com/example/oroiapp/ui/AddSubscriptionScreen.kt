@@ -21,6 +21,7 @@ import java.util.Date
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.graphics.Color
 import kotlinx.coroutines.launch
+import com.example.oroiapp.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -33,22 +34,6 @@ fun AddEditScreen(
     val scope = rememberCoroutineScope()
     val focusManager = LocalFocusManager.current
     var isSaving by remember { mutableStateOf(false) }
-
-    val customTextFieldColors = OutlinedTextFieldDefaults.colors(
-        unfocusedTextColor = Color.Black,
-        focusedTextColor = Color.Black,
-
-        unfocusedTrailingIconColor = Color.Black,
-        focusedTrailingIconColor = Color.Black,
-
-        unfocusedLabelColor = Color.Black,
-        focusedLabelColor = MaterialTheme.colorScheme.primary,
-
-        unfocusedBorderColor = MaterialTheme.colorScheme.primary,
-
-        unfocusedContainerColor = Color(0xFFFFFFFF).copy(alpha = 0.5f),
-        focusedContainerColor = Color(0xFFFFFFFF).copy(alpha = 0.5f)
-    )
 
     Scaffold(
         topBar = {
@@ -70,14 +55,13 @@ fun AddEditScreen(
                 value = formState.name,
                 onValueChange = viewModel::onNameChange,
                 label = { Text("Izena (Ad: Netflix)") },
-                modifier = Modifier.fillMaxWidth(),
-                colors = customTextFieldColors
+                modifier = Modifier.fillMaxWidth()
             )
-            OutlinedTextField(value = formState.amount,
+            OutlinedTextField(
+                value = formState.amount,
                 onValueChange = viewModel::onAmountChange,
                 label = { Text("Kopurua (Ad: 9.99)") },
-                modifier = Modifier.fillMaxWidth(),
-                colors = customTextFieldColors
+                modifier = Modifier.fillMaxWidth()
             )
 
             BillingCycleSelector(selectedCycle = formState.billingCycle, onCycleSelected = viewModel::onBillingCycleChange)
@@ -114,22 +98,6 @@ fun BillingCycleSelector(
     var expanded by remember { mutableStateOf(false) }
     val cycleOptions = BillingCycle.values()
 
-    val customTextFieldColors = OutlinedTextFieldDefaults.colors(
-        unfocusedTextColor = Color.Black,
-        focusedTextColor = Color.Black,
-
-        unfocusedTrailingIconColor = Color.Black,
-        focusedTrailingIconColor = Color.Black,
-
-        unfocusedLabelColor = Color.Black,
-        focusedLabelColor = MaterialTheme.colorScheme.primary,
-
-        unfocusedBorderColor = MaterialTheme.colorScheme.primary,
-
-        unfocusedContainerColor = Color(0xFFFFFFFF).copy(alpha = 0.5f),
-        focusedContainerColor = Color(0xFFFFFFFF).copy(alpha = 0.5f)
-    )
-
     ExposedDropdownMenuBox(
         expanded = expanded,
         onExpandedChange = { expanded = !expanded }
@@ -146,8 +114,7 @@ fun BillingCycleSelector(
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             modifier = Modifier
                 .menuAnchor()
-                .fillMaxWidth(),
-            colors = customTextFieldColors
+                .fillMaxWidth()
         )
         ExposedDropdownMenu(
             expanded = expanded,
@@ -179,7 +146,6 @@ fun BillingCycleSelector(
 fun DatePickerField(
     selectedDate: Date,
     onDateSelected: (Date) -> Unit,
-    colors: TextFieldColors = OutlinedTextFieldDefaults.colors()
 ) {
     val context = LocalContext.current
     val calendar = Calendar.getInstance()
@@ -200,22 +166,6 @@ fun DatePickerField(
         }, year, month, day
     )
 
-    val customTextFieldColors = OutlinedTextFieldDefaults.colors(
-        unfocusedTextColor = Color.Black,
-        focusedTextColor = Color.Black,
-
-        unfocusedTrailingIconColor = Color.Black,
-        focusedTrailingIconColor = Color.Black,
-
-        unfocusedLabelColor = Color.Black,
-        focusedLabelColor = MaterialTheme.colorScheme.primary,
-
-        unfocusedBorderColor = MaterialTheme.colorScheme.primary,
-
-        unfocusedContainerColor = Color(0xFFFFFFFF).copy(alpha = 0.5f),
-        focusedContainerColor = Color(0xFFFFFFFF).copy(alpha = 0.5f)
-    )
-
     OutlinedTextField(
         value = dateFormat.format(selectedDate),
         onValueChange = {},
@@ -225,6 +175,5 @@ fun DatePickerField(
             Icon(Icons.Default.DateRange, "Hautatu data", Modifier.clickable { datePickerDialog.show() })
         },
         modifier = Modifier.fillMaxWidth(),
-        colors = customTextFieldColors
     )
 }
