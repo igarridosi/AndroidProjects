@@ -14,7 +14,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AdsClick
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.LinkOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -74,7 +76,8 @@ fun MainHeader(username: String) {
 fun MainScreen(
     viewModel: MainViewModel,
     onAddSubscription: () -> Unit,
-    onEditSubscription: (Int) -> Unit
+    onEditSubscription: (Int) -> Unit,
+    onCancelSubscription: (Subscription) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val dialogInput by viewModel.dialogUsernameInput.collectAsState()
@@ -116,7 +119,8 @@ fun MainScreen(
             Spacer(modifier = Modifier.height(24.dp))
             SubscriptionList(
                 subscriptions = uiState.subscriptions,
-                onEdit = onEditSubscription
+                onEdit = onEditSubscription,
+                onCancel = onCancelSubscription
             )
         }
     }
@@ -192,7 +196,8 @@ fun CostCard(title: String, amount: Double) {
 @Composable
 fun SubscriptionList(
     subscriptions: List<Subscription>,
-    onEdit: (Int) -> Unit
+    onEdit: (Int) -> Unit,
+    onCancel: (Subscription) -> Unit
 ) {
     LazyColumn(
         // Padding-a elementu bakoitzari emango diogu, ez zerrendari
@@ -202,38 +207,59 @@ fun SubscriptionList(
         items(items = subscriptions, key = { it.id }) { subscription ->
             val dismissState = rememberSwipeToDismissBoxState(
                 confirmValueChange = {
-                    if (it == SwipeToDismissBoxValue.EndToStart) {
-                        onEdit(subscription.id)
-                        return@rememberSwipeToDismissBoxState false
+                    when (it) {
+                        // Eskuinetik ezkerrera -> Editatu
+                        SwipeToDismissBoxValue.EndToStart -> {
+                            onEdit(subscription.id)
+                            return@rememberSwipeToDismissBoxState false // Ez dugu elementua desagertzerik nahi
+                        }
+                        // Ezkerretik eskuinera -> Ezeztatu ("Botoi Gorria")
+                        SwipeToDismissBoxValue.StartToEnd -> {
+                            onCancel(subscription)
+                            return@rememberSwipeToDismissBoxState false // Ez dugu elementua desagertzerik nahi
+                        }
+                        else -> return@rememberSwipeToDismissBoxState false
                     }
-                    false
                 }
             )
             SwipeToDismissBox(
                 state = dismissState,
                 modifier = Modifier.padding(vertical = 4.dp),
-                enableDismissFromStartToEnd = false,
+                enableDismissFromStartToEnd = true,
+                enableDismissFromEndToStart = true,
                 backgroundContent = {
-                    val color = when (dismissState.targetValue) {
-                        SwipeToDismissBoxValue.EndToStart -> MaterialTheme.colorScheme.primary
-                        else -> MaterialTheme.colorScheme.onPrimary
+                    val direction = dismissState.dismissDirection ?: return@SwipeToDismissBox
+
+                    // Kolorea eta ikonoa norabidearen arabera aldatu
+                    val (color, icon, alignment) = when (direction) {
+                        SwipeToDismissBoxValue.StartToEnd -> Triple(
+                            MaterialTheme.colorScheme.error,
+                            Icons.Default.AdsClick,
+                            Alignment.CenterStart
+                        )
+                        SwipeToDismissBoxValue.EndToStart -> Triple(
+                            MaterialTheme.colorScheme.onPrimary,
+                            Icons.Default.Edit,
+                            Alignment.CenterEnd
+                        )
+                        else -> Triple(Color.Transparent, Icons.Default.AdsClick, Alignment.Center)
                     }
+
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
                             .background(color, shape = RoundedCornerShape(12.dp))
                             .padding(horizontal = 20.dp),
-                        contentAlignment = Alignment.CenterEnd
+                        contentAlignment = alignment
                     ) {
                         Icon(
-                            Icons.Default.Edit,
-                            contentDescription = "Editatu ikonoa",
-                            tint = MaterialTheme.colorScheme.background
+                            icon,
+                            contentDescription = null,
+                            tint = Color.White
                         )
                     }
                 }
             ) {
-                // Orain SubscriptionItem da irristatzen den elementu osoa
                 SubscriptionItem(subscription = subscription)
             }
         }
@@ -348,52 +374,6 @@ fun SubscriptionItemPreview() {
             SubscriptionItem(subscription = sampleWeekly)
             SubscriptionItem(subscription = sampleMonthly)
             SubscriptionItem(subscription = sampleAnnual)
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Preview(showBackground = true, widthDp = 360, heightDp = 740)
-@Composable
-fun MainScreenPreview() {
-    val sampleSubscriptions = listOf(
-        Subscription(1, "Spotify", 9.99, "EUR", BillingCycle.MONTHLY, Date()),
-        Subscription(2, "HBO Max", 8.99, "EUR", BillingCycle.MONTHLY, Date()),
-        Subscription(3, "Amazon Prime", 49.90, "EUR", BillingCycle.ANNUAL, Date())
-    )
-    val sampleUiState = MainUiState(
-        subscriptions = sampleSubscriptions,
-        totalMonthlyCost = 19.84,
-        totalAnnualCost = 238.08,
-        totalDailyCost = 0.66
-    )
-
-    OroiTheme {
-        Scaffold(
-            topBar = {
-                CenterAlignedTopAppBar(
-                    title = { Text("Oroi - Nire Harpidetzak") },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.surface,
-                        titleContentColor = MaterialTheme.colorScheme.primary
-                    )
-                )
-            },
-            floatingActionButton = { FloatingActionButton(onClick = {}) { Icon(Icons.Filled.Add, "") } }
-        ) { paddingValues ->
-            Column(
-                modifier = Modifier
-                    .padding(paddingValues)
-                    .padding(16.dp)
-
-            ) {
-                CostCarousel(uiState = sampleUiState)
-                Spacer(modifier = Modifier.height(16.dp))
-                SubscriptionList(
-                    subscriptions = sampleUiState.subscriptions,
-                    onEdit = {}
-                )
-            }
         }
     }
 }

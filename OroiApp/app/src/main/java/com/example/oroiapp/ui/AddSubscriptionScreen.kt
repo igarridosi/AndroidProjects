@@ -2,6 +2,7 @@ package com.example.oroiapp.ui
 
 import android.app.DatePickerDialog
 import android.widget.DatePicker
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -25,6 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import kotlinx.coroutines.launch
 import com.example.oroiapp.ui.theme.*
 
+private const val OTHER_OPTION = "Beste bat..."
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddSubscriptionScreen(
@@ -56,11 +58,10 @@ fun AddSubscriptionScreen(
             modifier = Modifier.padding(paddingValues).padding(16.dp).fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            OutlinedTextField(
-                value = formState.name,
-                onValueChange = viewModel::onNameChange,
-                label = { Text("Izena (Ad: Netflix)") },
-                modifier = Modifier.fillMaxWidth()
+            ServiceNameInput(
+                viewModel = viewModel,
+                currentName = formState.name,
+                onNameChange = viewModel::onNameChange
             )
             OutlinedTextField(
                 value = formState.amount,
@@ -95,6 +96,68 @@ fun AddSubscriptionScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ServiceNameInput(
+    viewModel: AddEditViewModel,
+    currentName: String,
+    onNameChange: (String) -> Unit
+) {
+    // Lortu ViewModel-etik aurrez definitutako zerbitzuen zerrenda
+    val predefinedNames by viewModel.predefinedServiceNames.collectAsState()
+    // Gehitu "Beste bat..." aukera zerrendari
+    val dropdownOptions = predefinedNames + OTHER_OPTION
+
+    var expanded by remember { mutableStateOf(false) }
+    // Egoera honek kontrolatzen du eskuzko testu-eremua ikusgai dagoen ala ez
+    var isManualInputVisible by remember { mutableStateOf(false) }
+
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        ExposedDropdownMenuBox(
+            expanded = expanded,
+            onExpandedChange = { expanded = !expanded }
+        ) {
+            OutlinedTextField(
+                value = if (isManualInputVisible) OTHER_OPTION else currentName,
+                onValueChange = {},
+                readOnly = true,
+                label = { Text("Zerbitzuaren Izena") },
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                modifier = Modifier.menuAnchor().fillMaxWidth()
+            )
+            ExposedDropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
+            ) {
+                dropdownOptions.forEach { serviceName ->
+                    DropdownMenuItem(
+                        text = { Text(serviceName) },
+                        onClick = {
+                            if (serviceName == OTHER_OPTION) {
+                                isManualInputVisible = true
+                                onNameChange("") // Garbitu izena eskuz idazteko
+                            } else {
+                                isManualInputVisible = false
+                                onNameChange(serviceName) // Eguneratu izena hautatutakoarekin
+                            }
+                            expanded = false
+                        }
+                    )
+                }
+            }
+        }
+
+        // Eskuzko testu-eremua "Beste bat..." hautatzean bakarrik agertzen da, animazioarekin
+        AnimatedVisibility(visible = isManualInputVisible) {
+            OutlinedTextField(
+                value = currentName,
+                onValueChange = onNameChange,
+                label = { Text("Idatzi harpidetzaren izena") },
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

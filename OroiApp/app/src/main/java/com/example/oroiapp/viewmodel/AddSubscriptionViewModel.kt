@@ -3,14 +3,18 @@ package com.example.oroiapp.viewmodel
 import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.oroiapp.data.CancellationLinkDao
 import com.example.oroiapp.data.SubscriptionDao
 import com.example.oroiapp.model.BillingCycle
 import com.example.oroiapp.model.Subscription
 import com.example.oroiapp.worker.NotificationScheduler
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.Date
@@ -26,7 +30,8 @@ data class SubscriptionFormState(
 
 class AddEditViewModel(
     private val application: Application,
-    private val subscriptionDao: SubscriptionDao
+    private val subscriptionDao: SubscriptionDao,
+    private val cancellationLinkDao: CancellationLinkDao
 ) : ViewModel() {
 
     private val _formState = MutableStateFlow(SubscriptionFormState())
@@ -34,6 +39,10 @@ class AddEditViewModel(
 
     private val _navigationChannel = Channel<Unit>()
     val navigationEvent = _navigationChannel.receiveAsFlow()
+
+    val predefinedServiceNames: StateFlow<List<String>> =
+        cancellationLinkDao.getAllServiceNames()
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     fun saveSubscription() {
         viewModelScope.launch {

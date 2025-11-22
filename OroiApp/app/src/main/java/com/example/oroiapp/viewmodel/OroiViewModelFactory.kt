@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
+import com.example.oroiapp.data.CancellationLinkDao
 import com.example.oroiapp.data.SubscriptionDao
 import com.example.oroiapp.data.UserPreferencesRepository
 
@@ -12,6 +13,7 @@ object OroiViewModelFactory : ViewModelProvider.Factory {
 
     lateinit var dao: SubscriptionDao
     lateinit var userPrefs: UserPreferencesRepository
+    lateinit var cancellationDao: CancellationLinkDao
 
     override fun <T : ViewModel> create(
         modelClass: Class<T>,
@@ -26,7 +28,7 @@ object OroiViewModelFactory : ViewModelProvider.Factory {
             }
             // ORDENA: Lehenengo 'application', gero 'dao'
             modelClass.isAssignableFrom(AddEditViewModel::class.java) -> {
-                AddEditViewModel(application, dao) as T
+                AddEditViewModel(application, dao, cancellationDao) as T
             }
             // ORDENA: Lehenengo 'application', gero 'dao', gero 'savedStateHandle'
             modelClass.isAssignableFrom(EditSubscriptionViewModel::class.java) -> {

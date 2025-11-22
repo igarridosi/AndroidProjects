@@ -1,6 +1,8 @@
 package com.example.oroiapp
 
 import android.Manifest
+import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
@@ -12,7 +14,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.lifecycle.ViewModelProvider
@@ -30,6 +34,7 @@ import com.example.oroiapp.viewmodel.AddEditViewModel
 import com.example.oroiapp.viewmodel.EditSubscriptionViewModel
 import com.example.oroiapp.viewmodel.MainViewModel
 import com.example.oroiapp.viewmodel.OroiViewModelFactory
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     // 1. Baimena eskatzeko 'launcher'-a sortu
@@ -81,13 +86,36 @@ class MainActivity : ComponentActivity() {
 fun OroiApp(factory: ViewModelProvider.Factory) {
     val mainViewModel: MainViewModel = viewModel(factory = factory)
     val navController = rememberNavController()
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
 
     NavHost(navController = navController, startDestination = "main_screen") {
         composable("main_screen") {
             MainScreen(
                 viewModel = mainViewModel,
                 onAddSubscription = { navController.navigate("add_subscription") },
-                onEditSubscription = { subscriptionId -> navController.navigate("edit_subscription/$subscriptionId") }
+                onEditSubscription = { subscriptionId -> navController.navigate("edit_subscription/$subscriptionId") },
+                onCancelSubscription = { subscription ->
+                    scope.launch {
+                        // 1. Lortu DAO-a eta bilatu esteka
+                        val dao = OroiViewModelFactory.cancellationDao
+                        // '%'-ak erabiltzen ditugu bilaketa malguagoa egiteko (adibidez, "Spotify Premium" aurkitzeko "Spotify" bilatuz)
+                        val link = dao.findLinkByName("%${subscription.name}%")
+
+                        if (link != null) {
+                            // 2. Esteka aurkitu bada, ireki nabigatzailea
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(link.url))
+                            context.startActivity(intent)
+                        } else {
+                            // 3. Esteka aurkitu ez bada, jakinarazi erabiltzaileari
+                            Toast.makeText(
+                                context,
+                                "'${subscription.name}'-rako ezeztapen estekarik ez da aurkitu.",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+                    }
+                }
             )
         }
 
