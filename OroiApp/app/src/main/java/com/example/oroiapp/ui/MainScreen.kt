@@ -228,7 +228,7 @@ fun SubscriptionList(
                         Icon(
                             Icons.Default.Edit,
                             contentDescription = "Editatu ikonoa",
-                            tint = Color.White
+                            tint = MaterialTheme.colorScheme.background
                         )
                     }
                 }

@@ -27,7 +27,7 @@ import com.example.oroiapp.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddEditScreen(
+fun AddSubscriptionScreen(
     viewModel: AddEditViewModel,
     onNavigateBack: () -> Unit
 ) {
@@ -45,7 +45,10 @@ fun AddEditScreen(
                     IconButton(onClick = onNavigateBack) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Atzera")
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background
+                )
             )
         }
     ) { paddingValues ->
@@ -67,7 +70,10 @@ fun AddEditScreen(
             )
 
             BillingCycleSelector(selectedCycle = formState.billingCycle, onCycleSelected = viewModel::onBillingCycleChange)
-            DatePickerField(selectedDate = formState.firstPaymentDate, onDateSelected = viewModel::onDateChange)
+            DatePickerField(
+                selectedDate = formState.firstPaymentDate,
+                onDateSelected = viewModel::onDateChange
+            )
 
             Spacer(modifier = Modifier.weight(1f))
 

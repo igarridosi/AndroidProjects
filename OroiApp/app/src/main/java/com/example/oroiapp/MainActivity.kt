@@ -22,7 +22,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.oroiapp.ui.AddEditScreen
+import com.example.oroiapp.ui.AddSubscriptionScreen
 import com.example.oroiapp.ui.EditSubscriptionScreen
 import com.example.oroiapp.ui.MainScreen
 import com.example.oroiapp.ui.theme.OroiTheme
@@ -93,7 +93,7 @@ fun OroiApp(factory: ViewModelProvider.Factory) {
 
         composable(route = "add_subscription") {
             val addViewModel: AddEditViewModel = viewModel(factory = factory)
-            AddEditScreen(
+            AddSubscriptionScreen(
                 viewModel = addViewModel,
                 onNavigateBack = { navController.navigate("main_screen") {
                     popUpTo("main_screen") { inclusive = true }

@@ -12,4 +12,7 @@
     <color name="oroi_bright_purple">#FF7A40F2</color>
     <color name="oroi_background">#FFF0F2F5</color>
     <color name="oroi_text_on_deep_purple">#FFFFFFFF</color>
+
+    <color name="oroi_primary_light">#FF7A40F2</color>  <!-- MoreaDistiratsua -->
+    <color name="oroi_primary_dark">#FFD0C8FF</color>
 </resources>
