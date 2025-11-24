@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import com.example.oroiapp.data.ThemeSetting
 
 // Kolore paleta ilunerako
 private val DarkColorScheme = darkColorScheme(
@@ -58,10 +59,16 @@ private val LightColorScheme = lightColorScheme(
 
 @Composable
 fun OroiTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    themeSetting: ThemeSetting = ThemeSetting.SYSTEM,
     dynamicColor: Boolean = false, // Zure app-ak nortasun handia du, hobe kolore dinamikoak desgaitzea
     content: @Composable () -> Unit
 ) {
+    val darkTheme = when (themeSetting) {
+        ThemeSetting.LIGHT -> false
+        ThemeSetting.DARK -> true
+        ThemeSetting.SYSTEM -> isSystemInDarkTheme()
+    }
+
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
@@ -75,7 +82,7 @@ fun OroiTheme(
         SideEffect {
             val window = (view.context as Activity).window
             window.statusBarColor = colorScheme.primary.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
         }
     }
 

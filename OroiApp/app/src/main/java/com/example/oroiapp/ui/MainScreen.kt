@@ -6,6 +6,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
@@ -15,12 +16,18 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AdsClick
+import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.LinkOff
+import androidx.compose.material.icons.filled.SettingsBrightness
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,6 +38,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.oroiapp.data.ThemeSetting
 import com.example.oroiapp.model.BillingCycle
 import com.example.oroiapp.model.Subscription
 import com.example.oroiapp.ui.theme.OroiTheme
@@ -81,6 +89,17 @@ fun MainScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val dialogInput by viewModel.dialogUsernameInput.collectAsState()
+    var showThemeDialog by remember { mutableStateOf(false) }
+
+    if (showThemeDialog) {
+        ThemeChooserDialog(
+            onDismiss = { showThemeDialog = false },
+            onThemeSelected = { newTheme ->
+                viewModel.changeTheme(newTheme)
+                showThemeDialog = false
+            }
+        )
+    }
 
     if (uiState.showUsernameDialog) {
         UsernamePromptDialog(
@@ -93,16 +112,35 @@ fun MainScreen(
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = onAddSubscription,
-                shape = RoundedCornerShape(16.dp),
-                containerColor = MaterialTheme.colorScheme.primary
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(), // Ertzetatik tarte txiki bat uzteko
+                horizontalArrangement = Arrangement.SpaceBetween, // Elementu bat ezkerrera eta bestea eskuinera bidaltzen du
+                verticalAlignment = Alignment.CenterVertically,
+
             ) {
-                Icon(
-                    Icons.Filled.Add,
-                    contentDescription = "Harpidetza Gehitu",
-                    tint = MaterialTheme.colorScheme.surface
-                )
+                FloatingActionButton(
+                    onClick = { showThemeDialog = true },
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    shape = RoundedCornerShape(16.dp),
+                    modifier = Modifier
+                        .padding(horizontal = 34.dp),
+                ) {
+                    val icon = when (uiState.currentTheme) {
+                        ThemeSetting.LIGHT -> Icons.Default.LightMode
+                        ThemeSetting.DARK -> Icons.Default.DarkMode
+                        ThemeSetting.SYSTEM -> Icons.Default.SettingsBrightness
+                    }
+                    Icon(icon, contentDescription = "Aldatu Gaia", tint = MaterialTheme.colorScheme.surface)
+                }
+
+                FloatingActionButton(
+                    onClick = onAddSubscription,
+                    shape = RoundedCornerShape(16.dp),
+                    containerColor = MaterialTheme.colorScheme.primary
+                ) {
+                    Icon(Icons.Filled.Add, contentDescription = "Gehitu Harpidetza", tint = MaterialTheme.colorScheme.surface)
+                }
             }
         }
     ) { paddingValues ->
@@ -347,6 +385,43 @@ private fun calculateNextPaymentDate(subscription: Subscription): Date {
         }
     }
     return calendar.time
+}
+
+@Composable
+fun ThemeChooserDialog(
+    onDismiss: () -> Unit,
+    onThemeSelected: (ThemeSetting) -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Aukeratu Gaia") },
+        text = {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                TextButton(onClick = { onThemeSelected(ThemeSetting.SYSTEM) }) {
+                    Text("Sistemaren arabera")
+                }
+                TextButton(onClick = { onThemeSelected(ThemeSetting.LIGHT) }) {
+                    Text("Modu Argia")
+                }
+                TextButton(onClick = { onThemeSelected(ThemeSetting.DARK) }) {
+                    Text("Modu Iluna")
+                }
+            }
+        },
+        confirmButton = {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                TextButton(onClick = onDismiss) {
+                    Text("Itxi")
+                }
+            }
+        }
+    )
 }
 
 @Preview(showBackground = true)

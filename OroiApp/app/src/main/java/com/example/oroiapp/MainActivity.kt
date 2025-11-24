@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -59,7 +61,14 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         askNotificationPermission()
         setContent {
-            OroiTheme {
+
+            val mainViewModel: MainViewModel = viewModel(factory = OroiViewModelFactory)
+
+            //  Behatu ViewModel-eko 'uiState'-a. Aldatzen denean, hau birkonposatuko da.
+            val uiState by mainViewModel.uiState.collectAsState()
+
+
+            OroiTheme(themeSetting = uiState.currentTheme) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background

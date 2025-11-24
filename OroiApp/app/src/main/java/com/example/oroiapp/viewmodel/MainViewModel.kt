@@ -14,6 +14,9 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import com.example.oroiapp.data.ThemeSetting
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.launch
 
 // Interfazearen egoera definitzen du
 data class MainUiState(
@@ -22,7 +25,8 @@ data class MainUiState(
     val totalAnnualCost: Double = 0.0,
     val totalDailyCost: Double = 0.0,
     val username: String = "",
-    val showUsernameDialog: Boolean = false
+    val showUsernameDialog: Boolean = false,
+    val currentTheme: ThemeSetting = ThemeSetting.SYSTEM
 )
 
 private data class AllCosts(
@@ -36,6 +40,10 @@ class MainViewModel(
     private val userPrefs: UserPreferencesRepository
 ) : ViewModel() {
 
+    // Sortu MutableStateFlow bat uneko gaia gordetzeko ViewModel-ean.
+    // Hasierako balioa SharedPreferences-etik irakurtzen dugu.
+    private val _currentTheme = MutableStateFlow(userPrefs.getThemeSetting())
+
     // StateFlow bat interfazearen egoera erakusteko
     private val _username = MutableStateFlow(userPrefs.getUsername())
     private val _showUsernameDialog = MutableStateFlow(userPrefs.isFirstLaunch())
@@ -45,8 +53,9 @@ class MainViewModel(
     val uiState: StateFlow<MainUiState> = combine(
         subscriptionDao.getAllSubscriptions(),
         _username,
-        _showUsernameDialog
-    ) { subs, name, showDialog ->
+        _showUsernameDialog,
+        _currentTheme
+    ) { subs, name, showDialog, theme ->
         val allCosts = calculateAllCosts(subs)
         MainUiState(
             subscriptions = subs,
@@ -54,7 +63,8 @@ class MainViewModel(
             totalAnnualCost = allCosts.annual,
             totalDailyCost = allCosts.daily,
             username = name,
-            showUsernameDialog = showDialog
+            showUsernameDialog = showDialog,
+            currentTheme = theme
         )
     }.stateIn(
         scope = viewModelScope,
@@ -75,6 +85,11 @@ class MainViewModel(
         val dailyCost = monthlyCost / 30 // Hurbilketa (30 eguneko hilabetea)
 
         return AllCosts(monthly = monthlyCost, annual = annualCost, daily = dailyCost)
+    }
+
+    fun changeTheme(newTheme: ThemeSetting) {
+        userPrefs.saveThemeSetting(newTheme) // Gorde SharedPreferences-en
+        _currentTheme.value = newTheme       // Eguneratu ViewModel-eko egoera
     }
 
     fun onDialogUsernameChange(name: String) {
