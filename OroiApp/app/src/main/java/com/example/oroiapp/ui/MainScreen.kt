@@ -17,6 +17,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AdsClick
 import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.LinkOff
@@ -32,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -158,7 +160,8 @@ fun MainScreen(
             SubscriptionList(
                 subscriptions = uiState.subscriptions,
                 onEdit = onEditSubscription,
-                onCancel = onCancelSubscription
+                onCancel = onCancelSubscription,
+                contentPadding = paddingValues
             )
         }
     }
@@ -187,7 +190,7 @@ fun CostCarousel(uiState: MainUiState) {
             horizontalArrangement = Arrangement.Center
         ) {
             repeat(pagerState.pageCount) { index ->
-                val color = if (pagerState.currentPage == index) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface
+                val color = if (pagerState.currentPage == index) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onError
                 Box(
                     modifier = Modifier
                         .padding(2.dp)
@@ -235,12 +238,16 @@ fun CostCard(title: String, amount: Double) {
 fun SubscriptionList(
     subscriptions: List<Subscription>,
     onEdit: (Int) -> Unit,
-    onCancel: (Subscription) -> Unit
+    onCancel: (Subscription) -> Unit,
+    contentPadding: PaddingValues
 ) {
     LazyColumn(
         // Padding-a elementu bakoitzari emango diogu, ez zerrendari
-        verticalArrangement = Arrangement.spacedBy(0.dp),
-        contentPadding = PaddingValues(vertical = 8.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        contentPadding = PaddingValues(
+            top = contentPadding.calculateTopPadding(),
+            bottom = contentPadding.calculateBottomPadding() + 80.dp
+        )
     ) {
         items(items = subscriptions, key = { it.id }) { subscription ->
             val dismissState = rememberSwipeToDismissBoxState(
@@ -268,32 +275,47 @@ fun SubscriptionList(
                 backgroundContent = {
                     val direction = dismissState.dismissDirection ?: return@SwipeToDismissBox
 
-                    // Kolorea eta ikonoa norabidearen arabera aldatu
-                    val (color, icon, alignment) = when (direction) {
-                        SwipeToDismissBoxValue.StartToEnd -> Triple(
-                            MaterialTheme.colorScheme.error,
-                            Icons.Default.AdsClick,
-                            Alignment.CenterStart
-                        )
-                        SwipeToDismissBoxValue.EndToStart -> Triple(
-                            MaterialTheme.colorScheme.onPrimary,
-                            Icons.Default.Edit,
-                            Alignment.CenterEnd
-                        )
-                        else -> Triple(Color.Transparent, Icons.Default.AdsClick, Alignment.Center)
+                    // Definitu aldagaiak norabidearen arabera, modu argiagoan
+                    val backgroundColor: Color
+                    val icon: ImageVector
+                    val alignment: Alignment
+                    val tintColor: Color
+
+                    when (direction) {
+                        // "Botoi Gorria" (Ezeztatu)
+                        SwipeToDismissBoxValue.StartToEnd -> {
+                            backgroundColor = MaterialTheme.colorScheme.error
+                            icon = Icons.Default.AdsClick
+                            alignment = Alignment.CenterStart
+                            tintColor = MaterialTheme.colorScheme.onError
+                        }
+                        // Editatzeko ekintza
+                        SwipeToDismissBoxValue.EndToStart -> {
+                            backgroundColor = MaterialTheme.colorScheme.onPrimary
+                            icon = Icons.Default.Edit
+                            alignment = Alignment.CenterEnd
+                            tintColor = MaterialTheme.colorScheme.surface
+                        }
+                        else -> {
+                            backgroundColor = Color.Transparent
+                            icon = Icons.Default.Delete
+                            alignment = Alignment.Center
+                            tintColor = Color.Transparent
+                        }
                     }
+
 
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
-                            .background(color, shape = RoundedCornerShape(12.dp))
+                            .background(backgroundColor, shape = RoundedCornerShape(12.dp))
                             .padding(horizontal = 20.dp),
                         contentAlignment = alignment
                     ) {
                         Icon(
                             icon,
                             contentDescription = null,
-                            tint = Color.White
+                            tint = tintColor
                         )
                     }
                 }
@@ -422,33 +444,4 @@ fun ThemeChooserDialog(
             }
         }
     )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun CostCarouselPreview() {
-    val sampleUiState = MainUiState(
-        totalMonthlyCost = 21.98,
-        totalAnnualCost = 263.76,
-        totalDailyCost = 0.73
-    )
-    OroiTheme {
-        CostCarousel(uiState = sampleUiState)
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun SubscriptionItemPreview() {
-    val sampleWeekly = Subscription(1, "Clase de Yoga", 15.0, "EUR", BillingCycle.WEEKLY, Date())
-    val sampleMonthly = Subscription(2, "Netflix", 12.99, "EUR", BillingCycle.MONTHLY, Date())
-    val sampleAnnual = Subscription(3, "Amazon Prime", 49.90, "EUR", BillingCycle.ANNUAL, Date())
-
-    OroiTheme {
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(16.dp)) {
-            SubscriptionItem(subscription = sampleWeekly)
-            SubscriptionItem(subscription = sampleMonthly)
-            SubscriptionItem(subscription = sampleAnnual)
-        }
-    }
 }

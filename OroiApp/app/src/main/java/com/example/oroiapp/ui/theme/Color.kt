@@ -18,3 +18,4 @@ val Grisa = Color(0xFF4B4848)
 
 // --- AKZENTUAK ---
 val GorriErrorea = Color(0xFFF80F36)
+
