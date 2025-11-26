@@ -241,86 +241,117 @@ fun SubscriptionList(
     onCancel: (Subscription) -> Unit,
     contentPadding: PaddingValues
 ) {
-    LazyColumn(
-        // Padding-a elementu bakoitzari emango diogu, ez zerrendari
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        contentPadding = PaddingValues(
-            top = contentPadding.calculateTopPadding(),
-            bottom = contentPadding.calculateBottomPadding() + 80.dp
-        )
-    ) {
-        items(items = subscriptions, key = { it.id }) { subscription ->
-            val dismissState = rememberSwipeToDismissBoxState(
-                confirmValueChange = {
-                    when (it) {
-                        // Eskuinetik ezkerrera -> Editatu
-                        SwipeToDismissBoxValue.EndToStart -> {
-                            onEdit(subscription.id)
-                            return@rememberSwipeToDismissBoxState false // Ez dugu elementua desagertzerik nahi
-                        }
-                        // Ezkerretik eskuinera -> Ezeztatu ("Botoi Gorria")
-                        SwipeToDismissBoxValue.StartToEnd -> {
-                            onCancel(subscription)
-                            return@rememberSwipeToDismissBoxState false // Ez dugu elementua desagertzerik nahi
-                        }
-                        else -> return@rememberSwipeToDismissBoxState false
-                    }
-                }
-            )
-            SwipeToDismissBox(
-                state = dismissState,
-                modifier = Modifier.padding(vertical = 4.dp),
-                enableDismissFromStartToEnd = true,
-                enableDismissFromEndToStart = true,
-                backgroundContent = {
-                    val direction = dismissState.dismissDirection ?: return@SwipeToDismissBox
-
-                    // Definitu aldagaiak norabidearen arabera, modu argiagoan
-                    val backgroundColor: Color
-                    val icon: ImageVector
-                    val alignment: Alignment
-                    val tintColor: Color
-
-                    when (direction) {
-                        // "Botoi Gorria" (Ezeztatu)
-                        SwipeToDismissBoxValue.StartToEnd -> {
-                            backgroundColor = MaterialTheme.colorScheme.error
-                            icon = Icons.Default.AdsClick
-                            alignment = Alignment.CenterStart
-                            tintColor = MaterialTheme.colorScheme.onError
-                        }
-                        // Editatzeko ekintza
-                        SwipeToDismissBoxValue.EndToStart -> {
-                            backgroundColor = MaterialTheme.colorScheme.onPrimary
-                            icon = Icons.Default.Edit
-                            alignment = Alignment.CenterEnd
-                            tintColor = MaterialTheme.colorScheme.surface
-                        }
-                        else -> {
-                            backgroundColor = Color.Transparent
-                            icon = Icons.Default.Delete
-                            alignment = Alignment.Center
-                            tintColor = Color.Transparent
-                        }
-                    }
-
-
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(backgroundColor, shape = RoundedCornerShape(12.dp))
-                            .padding(horizontal = 20.dp),
-                        contentAlignment = alignment
-                    ) {
-                        Icon(
-                            icon,
-                            contentDescription = null,
-                            tint = tintColor
-                        )
-                    }
-                }
+    if (subscriptions.isEmpty()) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
             ) {
-                SubscriptionItem(subscription = subscription)
+                Icon(
+                    imageVector = Icons.Default.LinkOff,
+                    contentDescription = "Ez dago harpidetzarik",
+                    modifier = Modifier.size(48.dp),
+                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = "Gehitu zure Harpidetzak '+' ikonoan",
+                    style = MaterialTheme.typography.bodyLarge,
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                )
+            }
+        }
+    } else {
+        LazyColumn(
+            // Padding-a elementu bakoitzari emango diogu, ez zerrendari
+            modifier = Modifier.heightIn(max = 550.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = PaddingValues(
+                top = contentPadding.calculateTopPadding(),
+                bottom = contentPadding.calculateBottomPadding() + 20.dp
+            )
+        ) {
+            items(items = subscriptions, key = { it.id }) { subscription ->
+                val dismissState = rememberSwipeToDismissBoxState(
+                    confirmValueChange = {
+                        when (it) {
+                            // Eskuinetik ezkerrera -> Editatu
+                            SwipeToDismissBoxValue.EndToStart -> {
+                                onEdit(subscription.id)
+                                return@rememberSwipeToDismissBoxState false // Ez dugu elementua desagertzerik nahi
+                            }
+                            // Ezkerretik eskuinera -> Ezeztatu ("Botoi Gorria")
+                            SwipeToDismissBoxValue.StartToEnd -> {
+                                onCancel(subscription)
+                                return@rememberSwipeToDismissBoxState false // Ez dugu elementua desagertzerik nahi
+                            }
+
+                            else -> return@rememberSwipeToDismissBoxState false
+                        }
+                    }
+                )
+                SwipeToDismissBox(
+                    state = dismissState,
+                    modifier = Modifier.padding(vertical = 4.dp),
+                    enableDismissFromStartToEnd = true,
+                    enableDismissFromEndToStart = true,
+                    backgroundContent = {
+                        val direction = dismissState.dismissDirection ?: return@SwipeToDismissBox
+
+                        // Definitu aldagaiak norabidearen arabera, modu argiagoan
+                        val backgroundColor: Color
+                        val icon: ImageVector
+                        val alignment: Alignment
+                        val tintColor: Color
+
+                        when (direction) {
+                            // "Botoi Gorria" (Ezeztatu)
+                            SwipeToDismissBoxValue.StartToEnd -> {
+                                backgroundColor = MaterialTheme.colorScheme.error
+                                icon = Icons.Default.AdsClick
+                                alignment = Alignment.CenterStart
+                                tintColor = MaterialTheme.colorScheme.onError
+                            }
+                            // Editatzeko ekintza
+                            SwipeToDismissBoxValue.EndToStart -> {
+                                backgroundColor = MaterialTheme.colorScheme.onPrimary
+                                icon = Icons.Default.Edit
+                                alignment = Alignment.CenterEnd
+                                tintColor = MaterialTheme.colorScheme.surface
+                            }
+
+                            else -> {
+                                backgroundColor = Color.Transparent
+                                icon = Icons.Default.Delete
+                                alignment = Alignment.Center
+                                tintColor = Color.Transparent
+                            }
+                        }
+
+
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(backgroundColor, shape = RoundedCornerShape(12.dp))
+                                .padding(horizontal = 20.dp),
+                            contentAlignment = alignment
+                        ) {
+                            Icon(
+                                icon,
+                                contentDescription = null,
+                                tint = tintColor
+                            )
+                        }
+                    }
+                ) {
+                    SubscriptionItem(subscription = subscription)
+                }
             }
         }
     }
@@ -341,7 +372,7 @@ fun SubscriptionItem(subscription: Subscription) {
         Box { // Box hau badge-a kokatzeko da
             Row(
                 modifier = Modifier
-                    .padding(16.dp)
+                    .padding(20.dp)
                     .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -349,7 +380,7 @@ fun SubscriptionItem(subscription: Subscription) {
                 Column {
                     Text(subscription.name,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
+                        fontSize = 20.sp,
                         color = MaterialTheme.colorScheme.onBackground
                     )
                     Text(
