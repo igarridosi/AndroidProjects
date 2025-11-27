@@ -113,20 +113,18 @@ fun MainScreen(
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
-        floatingActionButton = {
+        bottomBar = {
             Row(
                 modifier = Modifier
-                    .fillMaxWidth(), // Ertzetatik tarte txiki bat uzteko
-                horizontalArrangement = Arrangement.SpaceBetween, // Elementu bat ezkerrera eta bestea eskuinera bidaltzen du
-                verticalAlignment = Alignment.CenterVertically,
-
+                    .fillMaxWidth()
+                    .padding(top = 16.dp, bottom = 70.dp, start = 16.dp, end = 16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 FloatingActionButton(
                     onClick = { showThemeDialog = true },
                     containerColor = MaterialTheme.colorScheme.primary,
-                    shape = RoundedCornerShape(16.dp),
-                    modifier = Modifier
-                        .padding(horizontal = 34.dp),
+                    shape = RoundedCornerShape(16.dp)
                 ) {
                     val icon = when (uiState.currentTheme) {
                         ThemeSetting.LIGHT -> Icons.Default.LightMode
@@ -138,8 +136,8 @@ fun MainScreen(
 
                 FloatingActionButton(
                     onClick = onAddSubscription,
-                    shape = RoundedCornerShape(16.dp),
-                    containerColor = MaterialTheme.colorScheme.primary
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    shape = RoundedCornerShape(16.dp)
                 ) {
                     Icon(Icons.Filled.Add, contentDescription = "Gehitu Harpidetza", tint = MaterialTheme.colorScheme.surface)
                 }
@@ -270,12 +268,8 @@ fun SubscriptionList(
     } else {
         LazyColumn(
             // Padding-a elementu bakoitzari emango diogu, ez zerrendari
-            modifier = Modifier.heightIn(max = 550.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
-            contentPadding = PaddingValues(
-                top = contentPadding.calculateTopPadding(),
-                bottom = contentPadding.calculateBottomPadding() + 20.dp
-            )
+
         ) {
             items(items = subscriptions, key = { it.id }) { subscription ->
                 val dismissState = rememberSwipeToDismissBoxState(
