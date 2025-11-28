@@ -46,6 +46,7 @@ import com.example.oroiapp.model.Subscription
 import com.example.oroiapp.ui.theme.OroiTheme
 import com.example.oroiapp.viewmodel.MainUiState
 import com.example.oroiapp.viewmodel.MainViewModel
+import com.example.oroiapp.viewmodel.SubscriptionFilter
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -155,6 +156,10 @@ fun MainScreen(
             Spacer(modifier = Modifier.height(24.dp))
             CostCarousel(uiState = uiState)
             Spacer(modifier = Modifier.height(24.dp))
+            FilterChipRow(
+                currentFilter = uiState.currentFilter,
+                onFilterSelected = viewModel::updateFilter
+            )
             SubscriptionList(
                 subscriptions = uiState.subscriptions,
                 onEdit = onEditSubscription,
@@ -228,6 +233,35 @@ fun CostCard(title: String, amount: Double) {
                 color = MaterialTheme.colorScheme.surface
             )
         }
+    }
+}
+
+@Composable
+fun FilterChipRow(
+    currentFilter: SubscriptionFilter,
+    onFilterSelected: (SubscriptionFilter) -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        FilterChip(
+            selected = currentFilter == SubscriptionFilter.ALFABETIKOA,
+            onClick = { onFilterSelected(SubscriptionFilter.ALFABETIKOA) },
+            label = { Text("Alfabetikoa") }
+        )
+        FilterChip(
+            selected = currentFilter == SubscriptionFilter.ORDAINKETA_DATA,
+            onClick = { onFilterSelected(SubscriptionFilter.ORDAINKETA_DATA) },
+            label = { Text("Ordainketa") }
+        )
+        FilterChip(
+            selected = currentFilter == SubscriptionFilter.PREZIOA,
+            onClick = { onFilterSelected(SubscriptionFilter.PREZIOA) },
+            label = { Text("Prezioa") }
+        )
     }
 }
 
