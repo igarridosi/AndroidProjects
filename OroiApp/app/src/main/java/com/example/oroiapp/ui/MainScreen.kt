@@ -149,7 +149,7 @@ fun MainScreen(
                 .padding(paddingValues)
                 .fillMaxSize()
                 .padding(16.dp)
-        ) {
+        )   {
             // Usamos el nuevo header
             MainHeader(username = uiState.username)
             Spacer(modifier = Modifier.height(24.dp))
