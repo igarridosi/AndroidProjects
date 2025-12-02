@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -33,9 +34,28 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
+    buildFeatures {
+        viewBinding = true
+    }
 }
 
 dependencies {
+    // Room
+    implementation("androidx.room:room-runtime:2.8.4")
+    implementation("androidx.room:room-ktx:2.8.4") // Coroutines/Flow euskarria
+    ksp("androidx.room:room-compiler:2.8.4") // KSP prozesadorea
+
+    // Coroutines
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+
+    // Lifecycle (ViewModel eta LiveData/Flow integraziorako)
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.10.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.10.0")
+
+    // UI estandarra
+    implementation("com.google.android.material:material:1.11.0")
+
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
