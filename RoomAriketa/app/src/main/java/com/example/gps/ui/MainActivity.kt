@@ -1,9 +1,14 @@
 package com.example.gps.ui
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.annotation.RequiresPermission
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gps.data.database.AppDatabase
 import com.example.gps.data.entities.GpsPoint
@@ -12,10 +17,16 @@ import com.example.gps.data.repository.RouteRepository
 import com.example.gps.databinding.ActivityMainBinding
 import com.example.gps.ui.viewmodel.MainViewModel
 import com.example.gps.ui.viewmodel.MainViewModelFactory
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
+import com.google.android.gms.tasks.CancellationTokenSource
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     // Dependentzien eskuzko injekzioa (Hilt bezalako liburutegiak erabili gabe tutorialerako)
     private val database by lazy { AppDatabase.Companion.getDatabase(this) }
@@ -32,13 +43,21 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         // KLIK EGITEAN: Editatzeko Dialog-a ireki
-        val adapter = RouteAdapter { clickedItem -> // clickedItem orain RouteWithPoints motakoa da (Adapterra aldatu genuelako)
-            // Route objektua eta bere puntuak banatzen ditugu
-            val route = clickedItem.route
-            val lastPoint = clickedItem.points.lastOrNull() // Azken puntua hartu (baldin badago)
-
-            showEditRouteDialog(route, lastPoint)
-        }
+        val adapter = RouteAdapter(
+            onItemClicked = { clickedItem ->
+                // Editatzeko logika (lehen geneukana)
+                val route = clickedItem.route
+                val lastPoint = clickedItem.points.lastOrNull()
+                showEditRouteDialog(route, lastPoint)
+            },
+            onMapClicked = { clickedItem ->
+                // MAPA IREKITZEKO LOGIKA
+                val lastPoint = clickedItem.points.lastOrNull()
+                if (lastPoint != null) {
+                    openMap(lastPoint.latitude, lastPoint.longitude, clickedItem.route.name)
+                }
+            }
+        )
         binding.recyclerView.adapter = adapter
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
 
@@ -52,6 +71,9 @@ class MainActivity : AppCompatActivity() {
         binding.fabAdd.setOnClickListener {
             showCreateRouteDialog()
         }
+
+        // HASIERATU KOKAPEN ZERBITZUA
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
     }
     // 1. Sortzeko Dialog-a
     private fun showCreateRouteDialog() {
@@ -145,6 +167,11 @@ class MainActivity : AppCompatActivity() {
         etName.hint = "Izena"
         layout.addView(etName)
 
+        // Botoia kokapena lortzeko
+        val btnGps = android.widget.Button(context)
+        btnGps.text = "📍 Lortu nire kokapena"
+        layout.addView(btnGps)
+
         val etLat = android.widget.EditText(context)
         etLat.hint = "Latitudea"
         etLat.inputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL or android.text.InputType.TYPE_NUMBER_FLAG_SIGNED
@@ -154,6 +181,15 @@ class MainActivity : AppCompatActivity() {
         etLon.hint = "Longitudea"
         etLon.inputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL or android.text.InputType.TYPE_NUMBER_FLAG_SIGNED
         layout.addView(etLon)
+
+        // LOGIKA: Botoia sakatzean GPSa irakurri eta EditText-ak bete
+        btnGps.setOnClickListener {
+            getLocationAndFill { lat, lon ->
+                etLat.setText(lat.toString())
+                etLon.setText(lon.toString())
+                showToast("Kokapena eguneratua!")
+            }
+        }
 
         return InputViews(layout, etName, etLat, etLon)
     }
@@ -168,5 +204,56 @@ class MainActivity : AppCompatActivity() {
 
     private fun showToast(msg: String) {
         android.widget.Toast.makeText(this, msg, android.widget.Toast.LENGTH_SHORT).show()
+    }
+
+    // Callback bat erabiltzen dugu: kokapena lortzean kode zati hau exekutatuko da
+    @android.annotation.SuppressLint("MissingPermission")
+    private fun getLocationAndFill(onLocationFound: (Double, Double) -> Unit) {
+        // 1. Baimenak ditugu?
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // Ez dugu baimenik -> Eskatu
+            requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+            return
+        }
+
+        // 2. Baimena badugu -> Kokapena eskatu
+        // 'getCurrentLocation' erabiltzen dugu 'lastLocation' baino zehatzagoa delako
+        fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, CancellationTokenSource().token)
+            .addOnSuccessListener { location ->
+                if (location != null) {
+                    onLocationFound(location.latitude, location.longitude)
+                } else {
+                    showToast("Ezin izan da kokapena lortu. Ziurtatu GPSa piztuta dagoela.")
+                }
+            }
+            .addOnFailureListener {
+                showToast("Errorea GPSa irakurtzean: ${it.message}")
+            }
+    }
+
+    // Baimenaren erantzuna kudeatzeko (Android API berria)
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            showToast("Baimena onartua! Saiatu berriz botoia sakatzen.")
+        } else {
+            showToast("Baimena beharrezkoa da GPSa erabiltzeko.")
+        }
+    }
+
+    // Mapa irekitzeko funtzioa (Activity barruan nonbait jarri)
+    private fun openMap(lat: Double, lon: Double, label: String) {
+        val uri = android.net.Uri.parse("geo:$lat,$lon?q=$lat,$lon($label)")
+        val intent = android.content.Intent(android.content.Intent.ACTION_VIEW, uri)
+        intent.setPackage("com.google.android.apps.maps") // Google Maps behartu (aukerakoa)
+
+        try {
+            startActivity(intent)
+        } catch (e: Exception) {
+            // Google Maps ez badago, saiatu nabigatzaile orokorrarekin
+            val webIntent = android.content.Intent(android.content.Intent.ACTION_VIEW, uri)
+            startActivity(webIntent)
+        }
     }
 }

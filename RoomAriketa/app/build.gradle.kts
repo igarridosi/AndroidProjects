@@ -57,6 +57,8 @@ dependencies {
 
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
 
+    implementation("com.google.android.gms:play-services-location:21.1.0")
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

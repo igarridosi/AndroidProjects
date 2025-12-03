@@ -13,7 +13,8 @@ import java.util.Date
 import java.util.Locale
 
 class RouteAdapter(
-    private val onItemClicked: (RouteWithPoints) -> Unit
+    private val onItemClicked: (RouteWithPoints) -> Unit,
+    private val onMapClicked: (RouteWithPoints) -> Unit
 ) : ListAdapter<RouteWithPoints, RouteAdapter.RouteViewHolder>(RouteDiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RouteViewHolder {
@@ -38,14 +39,19 @@ class RouteAdapter(
 
             // 2. Koordenatuak kudeatu (Points zerrendatik)
             if (item.points.isNotEmpty()) {
-                // Azken puntua hartuko dugu (azken kokapena)
                 val lastPoint = item.points.last()
-                val lat = String.format("%.4f", lastPoint.latitude) // 4 hamartarrekin
+                val lat = String.format("%.4f", lastPoint.latitude)
                 val lon = String.format("%.4f", lastPoint.longitude)
-
                 binding.tvCoordinates.text = "Lat: $lat, Lon: $lon"
+
+                // Puntuak badaude, mapa botoia aktibatu
+                binding.btnMap.isEnabled = true
+                binding.btnMap.setOnClickListener {
+                    onMapClicked(item) // <-- MAPA BOTOIAREN DEIA
+                }
             } else {
                 binding.tvCoordinates.text = "Punturik gabe"
+                binding.btnMap.isEnabled = false // Punturik gabe ezin da mapa ireki
             }
 
             // Klik egitean, Route objektua pasatzen dugu (lehen bezala)
